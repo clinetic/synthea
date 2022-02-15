@@ -335,7 +335,7 @@ public class PCORnetExporter {
         // DRG_TYPE
         s.append(',');
         // ENC_TYPE
-        s.append(encounter.type).append(',');
+        s.append(clean(encounter.type)).append(',');
         // ENCOUNTERID
         s.append(encounterID).append(',');
         // FACILITY_LOCATION
@@ -344,7 +344,7 @@ public class PCORnetExporter {
         }
         s.append(',');
         // FACILITY_TYPE
-        s.append(encounter.provider.type).append(',');
+        s.append(clean(encounter.provider.type)).append(',');
         // FACILITYID
         s.append(encounter.provider.id).append(',');
         // PATID
