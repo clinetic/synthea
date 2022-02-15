@@ -369,7 +369,7 @@ public class PCORnetExporter {
         // RAW_ENC_TYPE
         s.append(encounter.type).append(',');
         // RAW_FACILITY_TYPE
-        s.append(encounter.provider.type).append(',');
+        s.append(clean(encounter.provider.type)).append(',');
         // RAW_PAYER_ID_PRIMARY
         s.append(encounter.claim.payer.getResourceID()).append(',');
         // RAW_PAYER_ID_SECONDARY
