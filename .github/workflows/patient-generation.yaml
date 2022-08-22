@@ -24,3 +24,46 @@ jobs:
           mv *.csv $(date +"%Y-%m-%d")
           mkdir $(date +"%Y-%m-%d")/pcornet
           mv pcornet/*.csv $(date +"%Y-%m-%d")/pcornet
+          aws s3 sync . s3://clinetic-development/data/patient/csv
+      - name: Send Slack Message for Build Status
+        if: always()
+        id: slack
+        uses: slackapi/slack-github-action@v1.18.0
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        with:
+          payload: |
+            {
+              "text": "${{ job.status }} - patient-generation"
+            }
+  generate-2.7:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          ref: 'tags/v2.7.0'
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Run Synthea
+        run: |
+          ./run_synthea --exporter.csv.export true -p 1000 "North Carolina"
+          cd output/csv
+          mkdir $(date +"%Y-%m-%d")
+          mv *.csv $(date +"%Y-%m-%d")
+          aws s3 sync . s3://clinetic-development/data/omop/patient/csv
+      - name: Send Slack Message for Build Status
+        if: always()
+        id: slack
+        uses: slackapi/slack-github-action@v1.18.0
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        with:
+          payload: |
+            {
+              "text": "${{ job.status }} - patient-generation-2.7"
+            }
