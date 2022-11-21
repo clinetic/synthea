@@ -22,8 +22,8 @@
         {
           "condition": {
             "condition_type": "Age",
-            "operator": "<",
-            "quantity": 5,
+            "operator": "<=",
+            "quantity": 6,
             "unit": "years"
           },
           "distributions": [
