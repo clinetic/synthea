@@ -636,7 +636,7 @@
         },
         {
           "transition": "Possible_blood_conditions",
-          "distribution": 0.96
+          "distribution": 0.94
         },
         {
           "transition": "cervix_carcinoma_excl",
@@ -644,7 +644,7 @@
         },
         {
           "transition": "kidney_carcinoid_excl",
-          "distribution": 1
+          "distribution": 0.01
         }
       ]
     },
