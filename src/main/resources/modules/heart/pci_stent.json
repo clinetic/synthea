@@ -1,0 +1,139 @@
+{
+  "name": "pci_stent",
+  "specialty": "CARDIOVASCULAR DISEASE (CARDIOLOGY)",
+  "remarks": [
+    "PCI Stent Procedure"
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Stent Encounter"
+    },
+    "Terminal": {
+      "type": "Terminal"
+    },
+    "Recovery": {
+      "type": "Delay",
+      "direct_transition": "Education",
+      "range": {
+        "low": 2,
+        "high": 3,
+        "unit": "days"
+      }
+    },
+    "Preop Delay": {
+      "type": "Delay",
+      "range": {
+        "low": 30,
+        "high": 90,
+        "unit": "minutes"
+      },
+      "distributed_transition": [
+        {
+          "transition": "Angioplasty",
+          "distribution": 0.33
+        },
+        {
+          "transition": "bypass_graft",
+          "distribution": 0.33
+        },
+        {
+          "transition": "peripheral",
+          "distribution": 0.3400000000000001
+        }
+      ]
+    },
+    "Stent Encounter": {
+      "type": "Encounter",
+      "encounter_class": "inpatient",
+      "reason": "chf",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 736774000,
+          "display": "Inpatient surgery care (regime/therapy) (procedure)"
+        }
+      ],
+      "direct_transition": "Preop Delay"
+    },
+    "Discharge": {
+      "type": "EncounterEnd",
+      "direct_transition": "Terminal"
+    },
+    "Education": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 243063003,
+          "display": "Postoperative procedure education (procedure)"
+        }
+      ],
+      "duration": {
+        "low": 30,
+        "high": 60,
+        "unit": "minutes"
+      },
+      "reason": "chf",
+      "direct_transition": "Discharge"
+    },
+    "Angioplasty": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 429639007,
+          "display": "Percutaneous transluminal balloon angioplasty with insertion of stent into coronary artery (procedure)"
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "parameters": {
+          "high": 60,
+          "low": 30
+        }
+      },
+      "unit": "minutes",
+      "direct_transition": "Recovery"
+    },
+    "bypass_graft": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 726011000,
+          "display": "Placement of stent in coronary artery bypass graft (procedure)"
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "parameters": {
+          "high": 60,
+          "low": 30
+        }
+      },
+      "unit": "minutes",
+      "direct_transition": "Recovery"
+    },
+    "peripheral": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 707811000,
+          "display": "Percutaneous transluminal insertion of peripheral stent into artery (procedure)"
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "parameters": {
+          "high": 60,
+          "low": 30
+        }
+      },
+      "unit": "minutes",
+      "direct_transition": "Recovery"
+    }
+  },
+  "gmf_version": 1
+}
