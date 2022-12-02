@@ -870,8 +870,8 @@
       "codes": [
         {
           "system": "RxNorm",
-          "code": 1114195,
-          "display": "rivaroxaban"
+          "code": 259255,
+          "display": "atorvastatin 80 MG Oral Tablet"
         }
       ],
       "direct_transition": "Check_CABG_Referral"
