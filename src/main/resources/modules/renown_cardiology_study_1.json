@@ -1,0 +1,881 @@
+{
+  "name": "renown_cardiology_study_1",
+  "specialty": "CARDIOVASCULAR DISEASE (CARDIOLOGY)",
+  "remarks": [
+    "This module is not intended to model clinical workflow, it is intended to funnel eligible patients into the renown cardiology study 1."
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Chance_of_CH"
+    },
+    "Terminal": {
+      "type": "Terminal"
+    },
+    "History of CH": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "history_of_ch",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 399211009,
+          "display": "History of myocardial infarcation (situation"
+        }
+      ],
+      "distributed_transition": [
+        {
+          "transition": "Death",
+          "distribution": {
+            "attribute": "chance_of_ch_death",
+            "default": 0.3
+          }
+        },
+        {
+          "transition": "End_Encounter",
+          "distribution": 0.7
+        }
+      ]
+    },
+    "PCI_STENT": {
+      "type": "CallSubmodule",
+      "submodule": "heart/pci_stent",
+      "direct_transition": "Check_CABG_Referral"
+    },
+    "End_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Chance_of_Recurrent_CH"
+    },
+    "Death": {
+      "type": "Death",
+      "direct_transition": "Terminal",
+      "remarks": [
+        "assume for now all pre-hospital deaths are MI"
+      ],
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 399211009,
+          "display": "History of myocardial infarction (situation)"
+        }
+      ]
+    },
+    "Chance_of_CH": {
+      "type": "Delay",
+      "exact": {
+        "quantity": 5,
+        "unit": "years"
+      },
+      "complex_transition": [
+        {
+          "condition": {
+            "condition_type": "Age",
+            "operator": ">",
+            "quantity": 15,
+            "unit": "years"
+          },
+          "distributions": [
+            {
+              "transition": "Symptoms",
+              "distribution": 0.01
+            }
+          ]
+        },
+        {
+          "condition": {
+            "condition_type": "Age",
+            "operator": ">",
+            "quantity": 35,
+            "unit": "years"
+          },
+          "distributions": [
+            {
+              "transition": "Symptoms",
+              "distribution": 0.1
+            }
+          ]
+        },
+        {
+          "condition": {
+            "condition_type": "Age",
+            "operator": ">",
+            "quantity": 50,
+            "unit": "years"
+          },
+          "distributions": [
+            {
+              "transition": "Initial",
+              "distribution": 0.2
+            }
+          ]
+        },
+        {
+          "distributions": [
+            {
+              "transition": "Chance_of_CH",
+              "distribution": 1
+            }
+          ]
+        }
+      ]
+    },
+    "Symptoms": {
+      "type": "Simple",
+      "direct_transition": "Age_Guard"
+    },
+    "Cardiac_Assessment": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 710839006,
+          "display": "Assessment of cardiac status using monitoring device (procedure)"
+        }
+      ],
+      "duration": {
+        "low": 2,
+        "high": 2,
+        "unit": "minutes"
+      },
+      "direct_transition": "ECG"
+    },
+    "Lab test": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 15220000,
+          "display": "Laboratory test (procedure)"
+        }
+      ],
+      "duration": {
+        "low": 5,
+        "high": 10,
+        "unit": "minutes"
+      },
+      "direct_transition": "Cardiac_Labs"
+    },
+    "TTE": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 433236007,
+          "display": "Transthoracic echocardiography (procedure)"
+        }
+      ],
+      "duration": {
+        "low": 30,
+        "high": 30,
+        "unit": "minutes"
+      },
+      "distributed_transition": [
+        {
+          "transition": "LVEF",
+          "distribution": 0.1
+        },
+        {
+          "transition": "Discharge_Medications",
+          "distribution": 0.8999999999999999
+        }
+      ]
+    },
+    "Discharge_Care_Plan": {
+      "type": "CarePlanStart",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 736372004,
+          "display": "Discharge care plan (record artifact)"
+        }
+      ],
+      "direct_transition": "History of CH"
+    },
+    "Chance_of_Recurrent_CH": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Terminal",
+          "distribution": 0.95
+        },
+        {
+          "transition": "Chance_of_CH",
+          "distribution": 0.05
+        }
+      ]
+    },
+    "NSTEACS": {
+      "type": "CallSubmodule",
+      "submodule": "heart/nsteacs_pathway",
+      "direct_transition": "Check_CABG_Referral"
+    },
+    "Chest_XRay": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 399208008,
+          "display": "Plain chest X-ray (procedure)"
+        }
+      ],
+      "duration": {
+        "low": 10,
+        "high": 10,
+        "unit": "minutes"
+      },
+      "direct_transition": "Diagnostic_Assessment"
+    },
+    "Emergency_Encounter": {
+      "type": "Encounter",
+      "encounter_class": "emergency",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 50849002,
+          "display": "Emergency room admission (procedure)"
+        }
+      ],
+      "direct_transition": "Cardiac_Assessment"
+    },
+    "Pre-Hospital Death": {
+      "type": "Death",
+      "direct_transition": "Terminal",
+      "remarks": [
+        "assume for now all pre-hospital deaths are STEMI"
+      ],
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 401303003,
+          "display": "Acute ST segment elevation myocardial infarction (disorder)"
+        }
+      ]
+    },
+    "Check_CABG_Referral": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "transition": "Reset_CABG_Referral_Flag",
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "ACS_CABG_referral",
+            "operator": "==",
+            "value": true
+          }
+        },
+        {
+          "transition": "TTE"
+        }
+      ]
+    },
+    "Discharge_Medications": {
+      "type": "CallSubmodule",
+      "submodule": "heart/acs_discharge_meds",
+      "direct_transition": "Discharge_Care_Plan"
+    },
+    "Reset_CABG_Referral_Flag": {
+      "type": "SetAttribute",
+      "attribute": "ACS_CABG_referral",
+      "direct_transition": "History of CH",
+      "remarks": [
+        "Reset the referral flag, so that just in case the patient winds up going through this pathway a second time, the attribute will be set as appropriate"
+      ]
+    },
+    "ACS_Arrival_Meds": {
+      "type": "CallSubmodule",
+      "submodule": "heart/acs_arrival_medications",
+      "direct_transition": "Lab test"
+    },
+    "Cardiac_Labs": {
+      "type": "CallSubmodule",
+      "submodule": "heart/cardiac_labs",
+      "direct_transition": "HS Troponin-I 0hr"
+    },
+    "HS Troponin-I 0hr": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "ng/L",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "89579-7",
+          "display": "Troponin I.cardiac [Mass/volume] in Serum or Plasma by High sensitivity method"
+        }
+      ],
+      "range": {
+        "low": 0,
+        "high": 120
+      },
+      "remarks": [
+        "    Normal range: below 0.04 ng/ml",
+        "    Probable heart attack: above 0.40 ng/ml",
+        "https://testguide.labmed.uw.edu/public/view/TROPIG",
+        " ",
+        "Note this is used in the NSTEACS pathway to decide between NSTEMI and UA"
+      ],
+      "distributed_transition": [
+        {
+          "transition": "High Lp(a)",
+          "distribution": 0.05
+        },
+        {
+          "transition": "Normal_Lp(a)",
+          "distribution": 0.95
+        }
+      ]
+    },
+    "Diagnostic_Assessment": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 165197003,
+          "display": "Diagnostic assessment (procedure)"
+        }
+      ],
+      "distributed_transition": [
+        {
+          "transition": "LAAC device",
+          "distribution": 0.02
+        },
+        {
+          "transition": "PCI_STENT",
+          "distribution": 0.56
+        },
+        {
+          "transition": "NSTEACS",
+          "distribution": 0.4
+        },
+        {
+          "transition": "AFIB_excl",
+          "distribution": 0.02
+        }
+      ]
+    },
+    "ECG": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 29303009,
+          "display": "Electrocardiographic procedure (procedure)"
+        }
+      ],
+      "duration": {
+        "low": 5,
+        "high": 10,
+        "unit": "minutes"
+      },
+      "distributed_transition": [
+        {
+          "transition": "NSTEACS",
+          "distribution": 0.6
+        },
+        {
+          "transition": "PCI_STENT",
+          "distribution": 0.4
+        }
+      ],
+      "direct_transition": "ACS_Arrival_Meds"
+    },
+    "Left_CA_occlusion": {
+      "type": "ConditionOnset",
+      "target_encounter": "Emergency_Encounter",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 703164000,
+          "display": "Acute ST segment elevation myocardial infarction due to left coronary artery occlusion"
+        }
+      ],
+      "direct_transition": "Emergency_Encounter"
+    },
+    "MI_interior": {
+      "type": "ConditionOnset",
+      "target_encounter": "Emergency_Encounter",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 703213009,
+          "display": "Acute ST segment elevation myocardial infarction of inferior wall"
+        }
+      ],
+      "direct_transition": "Emergency_Encounter"
+    },
+    "Coronary Heart Condition": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 53741008,
+          "display": "Coronary arteriosclerosis (disorder)"
+        }
+      ],
+      "distributed_transition": [
+        {
+          "transition": "Non-ST MI",
+          "distribution": 0.15
+        },
+        {
+          "transition": "Unspec_MI",
+          "distribution": 0.35
+        },
+        {
+          "transition": "Other_sites",
+          "distribution": 0.15
+        },
+        {
+          "transition": "MI_interior",
+          "distribution": 0.15
+        },
+        {
+          "transition": "Left_CA_occlusion",
+          "distribution": 0.15
+        },
+        {
+          "transition": "Pre-Hospital Death",
+          "distribution": 0.05
+        }
+      ],
+      "target_encounter": "Emergency_Encounter"
+    },
+    "Other_sites": {
+      "type": "ConditionOnset",
+      "target_encounter": "Emergency_Encounter",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 401303003,
+          "display": "Acute ST segment elevation myocardial infarction"
+        }
+      ],
+      "direct_transition": "Emergency_Encounter"
+    },
+    "Non-ST MI": {
+      "type": "ConditionOnset",
+      "target_encounter": "Emergency_Encounter",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 401314000,
+          "display": "Acute non-ST segment elevation myocardial infarction"
+        }
+      ],
+      "direct_transition": "Emergency_Encounter"
+    },
+    "Unspec_MI": {
+      "type": "ConditionOnset",
+      "target_encounter": "Emergency_Encounter",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 57054005,
+          "display": "Acute myocardial infarction"
+        }
+      ],
+      "direct_transition": "Emergency_Encounter"
+    },
+    "Hypertension": {
+      "type": "ConditionOnset",
+      "target_encounter": "Emergency_Encounter",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 38341003,
+          "display": "Hypertensive disorder"
+        }
+      ],
+      "direct_transition": "Coronary Heart Condition"
+    },
+    "hemorrhage_cond_excl": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 95454007,
+          "display": "Brain stem hemorrhage"
+        }
+      ],
+      "direct_transition": "time_delay"
+    },
+    "coagulation_cond_excl": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 67406007,
+          "display": "Disseminated intravascular coagulation"
+        }
+      ],
+      "direct_transition": "time_delay"
+    },
+    "hereditary_factor_1_excl": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "Hereditary factor VIII deficiency",
+          "display": "Hereditary factor VIII deficiency"
+        }
+      ],
+      "direct_transition": "time_delay"
+    },
+    "hereditary_factor_2_excl": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 41788008,
+          "display": "Hereditary factor IX deficiency disease"
+        }
+      ],
+      "direct_transition": "time_delay"
+    },
+    "blood_coag_cond_excl": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 64779008,
+          "display": "Blood coagulation disorder"
+        }
+      ],
+      "direct_transition": "time_delay"
+    },
+    "LVEF": {
+      "type": "Observation",
+      "category": "procedure",
+      "unit": "%",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "10230-1",
+          "display": "Left ventricular Ejection fraction"
+        }
+      ],
+      "range": {
+        "low": 25,
+        "high": 80
+      },
+      "conditional_transition": [
+        {
+          "transition": "Heart_Failure_excl",
+          "condition": {
+            "condition_type": "Observation",
+            "codes": [
+              {
+                "system": "LOINC",
+                "code": "10230-1",
+                "display": "Left ventricular Ejection fraction"
+              }
+            ],
+            "operator": "<=",
+            "value": 30
+          }
+        }
+      ]
+    },
+    "LAAC device": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 461331000124101,
+          "display": "Left atrial appendage closure (procedure)"
+        }
+      ],
+      "unit": "minutes",
+      "direct_transition": "Check_CABG_Referral"
+    },
+    "Possible_blood_conditions": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "blood_coag_cond_excl",
+          "distribution": 0.01
+        },
+        {
+          "transition": "hereditary_factor_1_excl",
+          "distribution": 0.01
+        },
+        {
+          "transition": "hereditary_factor_2_excl",
+          "distribution": 0.01
+        },
+        {
+          "transition": "coagulation_cond_excl",
+          "distribution": 0.01
+        },
+        {
+          "transition": "hemorrhage_cond_excl",
+          "distribution": 0.01
+        },
+        {
+          "transition": "time_delay",
+          "distribution": 0.95
+        }
+      ]
+    },
+    "Possible_malignancy": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "neoplasm_cond_excl",
+          "distribution": 0.01
+        },
+        {
+          "transition": "Carcinoma_excl",
+          "distribution": 0.01
+        },
+        {
+          "transition": "breast_carcinoma_exlc",
+          "distribution": 0.01
+        },
+        {
+          "transition": "neoplasm_skin_exlc",
+          "distribution": 0.01
+        },
+        {
+          "transition": "Possible_blood_conditions",
+          "distribution": 0.94
+        },
+        {
+          "transition": "cervix_carcinoma_excl",
+          "distribution": 0.01
+        },
+        {
+          "transition": "kidney_carcinoid_excl",
+          "distribution": 0.01
+        }
+      ]
+    },
+    "neoplasm_cond_excl": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 372026006,
+          "display": "Primary malignant neoplasm of vermilion border of lower lip"
+        }
+      ],
+      "direct_transition": "Possible_blood_conditions"
+    },
+    "kidney_carcinoid_excl": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 713574000,
+          "display": "Malignant carcinoid tumor of kidney"
+        }
+      ],
+      "direct_transition": "Possible_blood_conditions"
+    },
+    "Carcinoma_excl": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 402523001,
+          "display": "Basal cell carcinoma of truncal skin"
+        }
+      ],
+      "direct_transition": "Possible_blood_conditions"
+    },
+    "neoplasm_skin_exlc": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 109264009,
+          "display": "Overlapping malignant neoplasm of skin"
+        }
+      ],
+      "direct_transition": "Possible_blood_conditions"
+    },
+    "breast_carcinoma_exlc": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 109889007,
+          "display": "Intraductal carcinoma in situ of breast"
+        }
+      ],
+      "direct_transition": "Possible_blood_conditions"
+    },
+    "cervix_carcinoma_excl": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 92588008,
+          "display": "Carcinoma in situ of exocervix"
+        }
+      ],
+      "direct_transition": "Possible_blood_conditions"
+    },
+    "time_delay": {
+      "type": "Delay",
+      "direct_transition": "Hypertension",
+      "range": {
+        "low": 3,
+        "high": 120,
+        "unit": "months"
+      }
+    },
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">",
+        "quantity": 17,
+        "unit": "years"
+      },
+      "direct_transition": "Possible_malignancy"
+    },
+    "Heart_Failure_excl": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 84114007,
+          "display": "Heart failure"
+        }
+      ],
+      "direct_transition": "Discharge_Medications"
+    },
+    "High Lp(a)": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "nmol/L",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "14886-3",
+          "display": "Lipoprotein a"
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "round": false,
+        "parameters": {
+          "high": 350,
+          "low": 200
+        }
+      },
+      "direct_transition": "High_Lp(a)_treatments"
+    },
+    "High_Lp(a)_treatments": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "lomitapide",
+          "distribution": 0.35
+        },
+        {
+          "transition": "rna_thearpy_lp(a)",
+          "distribution": 0.2
+        },
+        {
+          "transition": "lipoprotein_apheresis",
+          "distribution": 0.35
+        }
+      ]
+    },
+    "lipoprotein_apheresis": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 448955002,
+          "display": "Low density lipoprotein apheresis (procedure)"
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "parameters": {
+          "high": 60,
+          "low": 30
+        }
+      },
+      "unit": "minutes",
+      "direct_transition": "Chest_XRay"
+    },
+    "lomitapide": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": 1364482,
+          "display": "lomitapide Pill"
+        }
+      ],
+      "direct_transition": "Chest_XRay",
+      "administration": true
+    },
+    "rna_thearpy_lp(a)": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "1234",
+          "display": "Olpasiran or pelacarsen"
+        }
+      ],
+      "direct_transition": "Chest_XRay"
+    },
+    "Normal_Lp(a)": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "nmol/L",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "14886-3",
+          "display": "Lipoprotein a"
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "round": true,
+        "parameters": {
+          "high": 200,
+          "low": 100
+        }
+      },
+      "direct_transition": "Chest_XRay"
+    },
+    "AFIB_excl": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 426749004,
+          "display": "Chronic atrial fibrillation"
+        }
+      ],
+      "distributed_transition": [
+        {
+          "transition": "Anticoagulants_excl",
+          "distribution": 0.95
+        },
+        {
+          "transition": "Check_CABG_Referral",
+          "distribution": 0.050000000000000044
+        }
+      ]
+    },
+    "Anticoagulants_excl": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": 259255,
+          "display": "atorvastatin 80 MG Oral Tablet"
+        }
+      ],
+      "direct_transition": "Check_CABG_Referral"
+    }
+  },
+  "gmf_version": 2
+}

@@ -1,0 +1,323 @@
+{
+  "name": "pci_stent",
+  "specialty": "CARDIOVASCULAR DISEASE (CARDIOLOGY)",
+  "remarks": [
+    "PCI Stent Procedure"
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Stent Encounter"
+    },
+    "Terminal": {
+      "type": "Terminal"
+    },
+    "Recovery": {
+      "type": "Delay",
+      "direct_transition": "Education",
+      "range": {
+        "low": 2,
+        "high": 3,
+        "unit": "days"
+      }
+    },
+    "Preop Delay": {
+      "type": "Delay",
+      "range": {
+        "low": 30,
+        "high": 90,
+        "unit": "minutes"
+      },
+      "distributed_transition": [
+        {
+          "transition": "Angioplasty",
+          "distribution": 0.1
+        },
+        {
+          "transition": "bypass_graft",
+          "distribution": 0.1
+        },
+        {
+          "transition": "peripheral",
+          "distribution": 0.10000000000000009
+        },
+        {
+          "transition": "subclavian",
+          "distribution": 0.05
+        },
+        {
+          "transition": "innominate_open",
+          "distribution": 0.1
+        },
+        {
+          "transition": "colic_open",
+          "distribution": 0.1
+        },
+        {
+          "transition": "splenic_open",
+          "distribution": 0.1
+        },
+        {
+          "transition": "hepatic",
+          "distribution": 0.1
+        },
+        {
+          "transition": "Innominate_intralum",
+          "distribution": 0.1
+        },
+        {
+          "transition": "colic_angio",
+          "distribution": 0.1
+        },
+        {
+          "transition": "subclav_intra",
+          "distribution": 0.05
+        }
+      ]
+    },
+    "Stent Encounter": {
+      "type": "Encounter",
+      "encounter_class": "inpatient",
+      "reason": "chf",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 736774000,
+          "display": "Inpatient surgery care (regime/therapy) (procedure)"
+        }
+      ],
+      "direct_transition": "Preop Delay"
+    },
+    "Discharge": {
+      "type": "EncounterEnd",
+      "direct_transition": "Terminal"
+    },
+    "Education": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 243063003,
+          "display": "Postoperative procedure education (procedure)"
+        }
+      ],
+      "duration": {
+        "low": 30,
+        "high": 60,
+        "unit": "minutes"
+      },
+      "reason": "chf",
+      "direct_transition": "Discharge"
+    },
+    "Angioplasty": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 429639007,
+          "display": "Percutaneous transluminal balloon angioplasty with insertion of stent into coronary artery (procedure)"
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "parameters": {
+          "high": 60,
+          "low": 30
+        }
+      },
+      "unit": "minutes",
+      "direct_transition": "Recovery"
+    },
+    "bypass_graft": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 726011000,
+          "display": "Placement of stent in coronary artery bypass graft (procedure)"
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "parameters": {
+          "high": 60,
+          "low": 30
+        }
+      },
+      "unit": "minutes",
+      "direct_transition": "Recovery"
+    },
+    "peripheral": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 707811000,
+          "display": "Percutaneous transluminal insertion of peripheral stent into artery (procedure)"
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "parameters": {
+          "high": 60,
+          "low": 30
+        }
+      },
+      "unit": "minutes",
+      "direct_transition": "Recovery"
+    },
+    "hepatic": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 233269009,
+          "display": "Percutaneous balloon angioplasty of hepatic artery"
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "parameters": {
+          "high": 60,
+          "low": 30
+        }
+      },
+      "unit": "minutes",
+      "direct_transition": "Recovery"
+    },
+    "subclavian": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 175454003,
+          "display": "Percutaneous angioplasty of subclavian artery"
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "parameters": {
+          "high": 60,
+          "low": 30
+        }
+      },
+      "unit": "minutes",
+      "direct_transition": "Recovery"
+    },
+    "splenic_open": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 434245001,
+          "display": "Percutaneous transluminal cutting balloon angioplasty of splenic artery using fluoroscopic guidance with contrast"
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "parameters": {
+          "high": 60,
+          "low": 30
+        }
+      },
+      "unit": "minutes",
+      "direct_transition": "Recovery"
+    },
+    "innominate_open": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 433108007,
+          "display": "Fluoroscopy guided percutaneous transluminal cutting balloon angioplasty of innominate vein with contrast"
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "parameters": {
+          "high": 60,
+          "low": 30
+        }
+      },
+      "unit": "minutes",
+      "direct_transition": "Recovery"
+    },
+    "Innominate_intralum": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 433108007,
+          "display": "Fluoroscopy guided percutaneous transluminal cutting balloon angioplasty of innominate vein with contrast"
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "parameters": {
+          "high": 60,
+          "low": 30
+        }
+      },
+      "unit": "minutes",
+      "direct_transition": "Recovery"
+    },
+    "colic_open": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 434246000,
+          "display": "Fluoroscopy guided percutaneous transluminal cutting balloon angioplasty of superior mesenteric artery with contrast"
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "parameters": {
+          "high": 60,
+          "low": 30
+        }
+      },
+      "unit": "minutes",
+      "direct_transition": "Recovery"
+    },
+    "colic_angio": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 233273007,
+          "display": "Percutaneous balloon angioplasty of superior mesenteric artery"
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "parameters": {
+          "high": 60,
+          "low": 30
+        }
+      },
+      "unit": "minutes",
+      "direct_transition": "Recovery"
+    },
+    "subclav_intra": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 431485005,
+          "display": "Fluoroscopy guided percutaneous transluminal angioplasty of subclavian artery with contrast"
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "parameters": {
+          "high": 60,
+          "low": 30
+        }
+      },
+      "unit": "minutes",
+      "direct_transition": "Recovery"
+    }
+  },
+  "gmf_version": 1
+}

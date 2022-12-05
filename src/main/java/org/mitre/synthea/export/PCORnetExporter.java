@@ -199,7 +199,7 @@ public class PCORnetExporter {
         for (HealthRecord.Encounter encounter : person.record.encounters) {
 
             String encounterID = encounter(person, person, personID, encounter);
-            String payerID = encounter.claim.payer.uuid;
+            String payerID = encounter.claim.plan.getPayer().uuid;
 
 
             for (HealthRecord.Entry condition : encounter.conditions) {
@@ -344,7 +344,7 @@ public class PCORnetExporter {
         }
         s.append(',');
         // FACILITY_TYPE
-        s.append(clean(encounter.provider.type)).append(',');
+        s.append(clean(encounter.provider.cmsProviderType)).append(',');
         // FACILITYID
         s.append(encounter.provider.id).append(',');
         // PATID
@@ -369,13 +369,13 @@ public class PCORnetExporter {
         // RAW_ENC_TYPE
         s.append(encounter.type).append(',');
         // RAW_FACILITY_TYPE
-        s.append(clean(encounter.provider.type)).append(',');
+        s.append(clean(encounter.provider.cmsProviderType)).append(',');
         // RAW_PAYER_ID_PRIMARY
-        s.append(encounter.claim.payer.getResourceID()).append(',');
+        s.append(encounter.claim.plan.getPayer().getResourceID()).append(',');
         // RAW_PAYER_ID_SECONDARY
         s.append(',');
         // RAW_PAYER_NAME_PRIMARY
-        s.append(encounter.claim.payer.getName()).append(',');
+        s.append(encounter.claim.plan.getPayer().getName()).append(',');
         // RAW_PAYER_NAME_SECONDARY
         s.append(',');
         // RAW_PAYER_TYPE_PRIMARY // TODO
