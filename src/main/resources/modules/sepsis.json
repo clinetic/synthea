@@ -3,7 +3,7 @@
   "remarks": [
     "Module Title: Sepsis",
     "Version Number: 1.0",
-    "Last Updated: 12/15/2020",
+    "Date Created: 12/15/2020",
     "Module Steward: ONC",
     "Module Developer: Clinovations Government + Health",
     "Description: Sepsis is a leading cause of death in critically ill patients in the United States. This module models the treatment of sepsis in patients >=18 years of age. It is based on the Surviving Sepsis Campaign clinical care guidelines for sepsis, particularly the guidelines for the Hour-1 Bundle for initial resuscitation of sepsis and septic shock. ",
@@ -135,8 +135,8 @@
       "codes": [
         {
           "system": "LOINC",
-          "code": "59032-3",
-          "display": "Lactate [Mass/volume] in Blood"
+          "code": "32693-4",
+          "display": "Lactate [Moles/volume] in Blood"
         }
       ],
       "conditional_transition": [
@@ -147,8 +147,8 @@
             "codes": [
               {
                 "system": "LOINC",
-                "code": "59032-3",
-                "display": "Lactate [Mass/volume] in Blood"
+                "code": "32693-4",
+                "display": "Lactate [Moles/volume] in Blood"
               }
             ],
             "operator": ">=",
@@ -262,7 +262,6 @@
     },
     "Septic_Shock": {
       "type": "ConditionOnset",
-      "assign_to_attribute": "",
       "codes": [
         {
           "system": "SNOMED-CT",
@@ -274,7 +273,7 @@
     },
     "Capillary_Refill": {
       "type": "Observation",
-      "category": "vital-signs",
+      "category": "exam",
       "unit": "",
       "codes": [
         {
@@ -439,8 +438,8 @@
       "codes": [
         {
           "system": "LOINC",
-          "code": "59032-3",
-          "display": "Lactate [Mass/volume] in Blood"
+          "code": "32693-4",
+          "display": "Lactate [Moles/volume] in Blood"
         }
       ],
       "direct_transition": "Fluid_Resuscitation",

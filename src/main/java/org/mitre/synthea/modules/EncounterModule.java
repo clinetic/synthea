@@ -8,6 +8,7 @@ import org.mitre.synthea.engine.Module;
 import org.mitre.synthea.helpers.Attributes;
 import org.mitre.synthea.helpers.Attributes.Inventory;
 import org.mitre.synthea.helpers.Utilities;
+import org.mitre.synthea.world.agents.Clinician;
 import org.mitre.synthea.world.agents.Person;
 import org.mitre.synthea.world.agents.Provider;
 import org.mitre.synthea.world.concepts.ClinicianSpecialty;
@@ -117,7 +118,6 @@ public final class EncounterModule extends Module {
 
     if (startedEncounter) {
       person.setCurrentEncounter(this, encounter);
-      CardiovascularDiseaseModule.performEncounter(person, time, encounter);
       Immunizations.performEncounter(person, time);
     }
 
@@ -126,7 +126,7 @@ public final class EncounterModule extends Module {
   }
 
   /**
-   * Create an Encounter that is coded, with a provider organzation, and a clinician.
+   * Create an Encounter that is coded, with a provider organization, and a clinician.
    * @param person The patient.
    * @param time The time of the encounter.
    * @param type The type of encounter (e.g. emergency).
@@ -138,13 +138,22 @@ public final class EncounterModule extends Module {
       String specialty, Code code) {
     // what year is it?
     int year = Utilities.getYear(time);
+
     // create the encounter
     Encounter encounter = person.encounterStart(time, type);
+
+
     if (code != null) {
       encounter.codes.add(code);
     }
     // assign a provider organization
-    Provider prov = person.getProvider(type, time);
+    Provider prov = null;
+    if  (specialty.equalsIgnoreCase(ClinicianSpecialty.CARDIOLOGY)) {
+      // Get the first provider in the list that was loaded
+      prov = Provider.getProviderList().get(0);
+    } else {
+      prov = person.getProvider(type, time);
+    }
     prov.incrementEncounters(type, year);
     encounter.provider = prov;
     // assign a clinician
@@ -168,7 +177,7 @@ public final class EncounterModule extends Module {
   }
 
   /**
-   * Recommended time between Wellness Visits by age of patient and whether 
+   * Recommended time between Wellness Visits by age of patient and whether
    * they have chronic medications.
    * @param person The patient.
    * @param time The time of the encounter which we translate to age of patient.
@@ -235,11 +244,11 @@ public final class EncounterModule extends Module {
 
   /**
    * Get all of the Codes this module uses, for inventory purposes.
-   * 
+   *
    * @return Collection of all codes and concepts this module uses
    */
   public static Collection<Code> getAllCodes() {
-    return Arrays.asList(ENCOUNTER_CHECKUP, ENCOUNTER_EMERGENCY, 
+    return Arrays.asList(ENCOUNTER_CHECKUP, ENCOUNTER_EMERGENCY,
         WELL_CHILD_VISIT, GENERAL_EXAM, ENCOUNTER_URGENTCARE);
   }
 

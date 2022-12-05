@@ -35,6 +35,18 @@ public class Distribution implements Serializable {
       case GAUSSIAN:
         value = (this.parameters.get("standardDeviation") * person.randGaussian())
             + this.parameters.get("mean");
+        if (this.parameters.containsKey("min")) {
+          double min = this.parameters.get("min");
+          if (value < min) {
+            value = min;
+          }
+        }
+        if (this.parameters.containsKey("max")) {
+          double max = this.parameters.get("max");
+          if (value > max) {
+            value = max;
+          }
+        }
         break;
       default:
         value = -1;
