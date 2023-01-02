@@ -1,0 +1,483 @@
+{
+  "name": "renown_cardiology_study_2",
+  "remarks": [
+    "This module is not intended to model clinical workflow, it is intended to funnel eligible patients into the renown cardiology study 2."
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Chance of CH",
+      "name": "Initial"
+    },
+    "Terminal": {
+      "type": "Terminal",
+      "name": "Terminal"
+    },
+    "Chance of CH": {
+      "type": "Delay",
+      "distribution": {
+        "kind": "EXACT",
+        "parameters": {
+          "value": 10
+        }
+      },
+      "unit": "years",
+      "name": "Chance of CH",
+      "complex_transition": [
+        {
+          "condition": {
+            "condition_type": "Age",
+            "operator": ">",
+            "quantity": 17,
+            "unit": "years"
+          },
+          "distributions": [
+            {
+              "transition": "cardio labs",
+              "distribution": 0.01
+            }
+          ]
+        },
+        {
+          "condition": {
+            "condition_type": "Age",
+            "operator": ">",
+            "quantity": 40,
+            "unit": "years"
+          },
+          "distributions": [
+            {
+              "transition": "Initial",
+              "distribution": 0.1
+            }
+          ]
+        },
+        {
+          "condition": {
+            "condition_type": "Age",
+            "operator": ">",
+            "quantity": 60,
+            "unit": "years"
+          },
+          "distributions": [
+            {
+              "transition": "Initial",
+              "distribution": 0.2
+            }
+          ]
+        }
+      ]
+    },
+    "cardio labs": {
+      "type": "CallSubmodule",
+      "submodule": "heart/cabg/labs_common",
+      "name": "cardio labs",
+      "direct_transition": "LDL Vital"
+    },
+    "high ldl-c": {
+      "type": "Delay",
+      "distribution": {
+        "kind": "EXACT",
+        "parameters": {
+          "value": 5
+        }
+      },
+      "unit": "years",
+      "name": "high ldl-c",
+      "distributed_transition": [
+        {
+          "transition": "chance_mi",
+          "distribution": 0.5
+        },
+        {
+          "transition": "care_state",
+          "distribution": 0.5
+        }
+      ]
+    },
+    "cardio labs followup": {
+      "type": "CallSubmodule",
+      "submodule": "heart/avrr/preoperative",
+      "direct_transition": "LVEF Result",
+      "name": "cardio labs followup"
+    },
+    "LVEF Result": {
+      "type": "DiagnosticReport",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "8808-8",
+          "display": "Left ventricular Ejection fraction by Cardiac angiogram",
+          "value_set": ""
+        }
+      ],
+      "observations": [
+        {
+          "category": "imaging",
+          "unit": "%",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "10230-1",
+              "display": "Left ventricular Ejection fraction"
+            }
+          ],
+          "range": {
+            "low": 20,
+            "high": 80
+          }
+        }
+      ],
+      "direct_transition": "eGFR",
+      "remarks": [
+        "LVEF"
+      ],
+      "name": "LVEF Result"
+    },
+    "LDL Vital": {
+      "type": "VitalSign",
+      "vital_sign": "LDL",
+      "unit": "mg/L",
+      "distribution": {
+        "kind": "UNIFORM",
+        "parameters": {
+          "high": 201,
+          "low": 100
+        }
+      },
+      "complex_transition": [
+        {
+          "condition": {
+            "condition_type": "Vital Sign",
+            "vital_sign": "LDL",
+            "operator": ">",
+            "value": 150
+          },
+          "distributions": [
+            {
+              "transition": "high ldl-c",
+              "distribution": 1
+            }
+          ]
+        },
+        {
+          "distributions": [
+            {
+              "transition": "Chance of CH",
+              "distribution": 1
+            }
+          ]
+        }
+      ],
+      "name": "LDL Vital"
+    },
+    "Encounter_diagnosis": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "reason": "cad_condition",
+      "telemedicine_possibility": "none",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "1234",
+          "display": "SNOMED Code",
+          "value_set": ""
+        }
+      ],
+      "direct_transition": "cardio labs followup",
+      "name": "Encounter_diagnosis"
+    },
+    "end_encounter": {
+      "type": "EncounterEnd",
+      "name": "end_encounter",
+      "distributed_transition": [
+        {
+          "transition": "Chance of CH",
+          "distribution": 0.9
+        },
+        {
+          "transition": "Terminal",
+          "distribution": 0.1
+        }
+      ]
+    },
+    "chance_mi": {
+      "type": "Simple",
+      "name": "chance_mi",
+      "distributed_transition": [
+        {
+          "transition": "MI",
+          "distribution": 0.1
+        },
+        {
+          "transition": "care_state",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "MI": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 401314000,
+          "display": "Acute non-ST segment elevation myocardial infarction",
+          "value_set": ""
+        }
+      ],
+      "name": "MI",
+      "distributed_transition": [
+        {
+          "transition": "PAD",
+          "distribution": 0.01
+        },
+        {
+          "transition": "ischemic",
+          "distribution": 0.01
+        },
+        {
+          "transition": "pci/stent",
+          "distribution": 0.01
+        },
+        {
+          "transition": "care_state",
+          "distribution": 0.95
+        },
+        {
+          "transition": "cardiac_disorders",
+          "distribution": 0.01
+        },
+        {
+          "transition": "pacemaker",
+          "distribution": 0.01
+        }
+      ]
+    },
+    "pci/stent": {
+      "type": "CallSubmodule",
+      "submodule": "heart/pci_stent",
+      "distributed_transition": [
+        {
+          "transition": "care_state",
+          "distribution": 1
+        }
+      ],
+      "name": "pci/stent"
+    },
+    "ischemic": {
+      "type": "CallSubmodule",
+      "submodule": "stable_ischemic_heart_disease",
+      "name": "ischemic",
+      "direct_transition": "ischemic_event"
+    },
+    "PAD": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 840580004,
+          "display": "Peripheral arterial disease (disorder)",
+          "value_set": ""
+        }
+      ],
+      "distributed_transition": [
+        {
+          "transition": "amputation",
+          "distribution": 0.01
+        },
+        {
+          "transition": "care_state",
+          "distribution": 0.99
+        }
+      ],
+      "name": "PAD"
+    },
+    "amputation": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 110470001,
+          "display": "Amputation above-knee, mid-thigh",
+          "value_set": ""
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "parameters": {
+          "high": 60,
+          "low": 30
+        }
+      },
+      "unit": "minutes",
+      "direct_transition": "care_state",
+      "name": "amputation"
+    },
+    "cardiac_disorders": {
+      "type": "Simple",
+      "name": "cardiac_disorders",
+      "distributed_transition": [
+        {
+          "transition": "cardiac_tach",
+          "distribution": 0.5
+        },
+        {
+          "transition": "cardiac_bundle_block",
+          "distribution": 0.5
+        }
+      ]
+    },
+    "cardiac_tach": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 25569003,
+          "display": "Ventricular tachycardia",
+          "value_set": ""
+        }
+      ],
+      "direct_transition": "care_state",
+      "name": "cardiac_tach"
+    },
+    "cardiac_bundle_block": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 63467002,
+          "display": "Left bundle branch block",
+          "value_set": ""
+        }
+      ],
+      "direct_transition": "care_state",
+      "name": "cardiac_bundle_block"
+    },
+    "care_state": {
+      "type": "SetAttribute",
+      "attribute": "care_priority_level",
+      "direct_transition": "cad_condition",
+      "name": "care_state",
+      "distribution": {
+        "kind": "UNIFORM",
+        "round": true,
+        "parameters": {
+          "high": 3,
+          "low": 1
+        }
+      }
+    },
+    "pacemaker": {
+      "type": "Simple",
+      "name": "pacemaker",
+      "distributed_transition": [
+        {
+          "transition": "pacemaker_procedure",
+          "distribution": 0.5
+        },
+        {
+          "transition": "pacemaker_diagnosis",
+          "distribution": 0.5
+        }
+      ]
+    },
+    "pacemaker_procedure": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 175135009,
+          "display": "Introduction of cardiac pacemaker system via vein (procedure)",
+          "value_set": ""
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "parameters": {
+          "high": 60,
+          "low": 30
+        }
+      },
+      "unit": "minutes",
+      "direct_transition": "pacemaker_diagnosis",
+      "name": "pacemaker_procedure"
+    },
+    "pacemaker_diagnosis": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 703398004,
+          "display": "Cardiac implant in situ",
+          "value_set": ""
+        }
+      ],
+      "direct_transition": "care_state",
+      "name": "pacemaker_diagnosis"
+    },
+    "eGFR": {
+      "type": "DiagnosticReport",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "77147-7",
+          "display": "Glomerular filtration rate/1.73 sq M.predicted [Volume Rate/Area] in Serum, Plasma or Blood by Creatinine-based formula (MDRD)",
+          "value_set": ""
+        }
+      ],
+      "observations": [
+        {
+          "category": "laboratory",
+          "unit": "rate/1.73 sq M",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "77147-7",
+              "display": "eGFR"
+            }
+          ],
+          "vital_sign": "EGFR"
+        }
+      ],
+      "direct_transition": "end_encounter",
+      "name": "eGFR"
+    },
+    "ischemic_event": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 195190007,
+          "display": "195190007,Cerebral infarction due to embolism of cerebral arteries",
+          "value_set": ""
+        }
+      ],
+      "distributed_transition": [
+        {
+          "transition": "pci/stent",
+          "distribution": 0.1
+        },
+        {
+          "transition": "care_state",
+          "distribution": 0.9
+        }
+      ],
+      "name": "ischemic_event"
+    },
+    "cad_condition": {
+      "type": "ConditionOnset",
+      "target_encounter": "Encounter_diagnosis",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 53741008,
+          "display": "Coronary arteriosclerosis (disorder)",
+          "value_set": ""
+        }
+      ],
+      "direct_transition": "Encounter_diagnosis",
+      "name": "cad_condition"
+    }
+  },
+  "gmf_version": 2
+}
