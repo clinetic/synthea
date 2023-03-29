@@ -1,0 +1,214 @@
+{
+  "name": "renown_pulmonology_study",
+  "remarks": [
+    "module intended to simulate pulmonology conditions and observations"
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "New_State",
+      "name": "Initial"
+    },
+    "Terminal": {
+      "type": "Terminal",
+      "name": "Terminal"
+    },
+    "Visit - pulmonary fibrosis": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "reason": "",
+      "telemedicine_possibility": "none",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 51615001,
+          "display": "Fibrosis of lung",
+          "value_set": ""
+        }
+      ],
+      "direct_transition": "Pulmonology_function_tests2",
+      "name": "Visit - pulmonary fibrosis"
+    },
+    "Pulmonology function tests": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 127783003,
+          "display": "Spirometry",
+          "value_set": ""
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "parameters": {
+          "high": 60,
+          "low": 30
+        }
+      },
+      "unit": "minutes",
+      "direct_transition": "FVC observation",
+      "name": "Pulmonology function tests",
+      "reason": "Lymphangiomatosis onset"
+    },
+    "FVC observation": {
+      "type": "Observation",
+      "category": "vital-signs",
+      "unit": "L",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "19870-5",
+          "display": "Forced vital capacity [Volume] Respiratory system",
+          "value_set": ""
+        }
+      ],
+      "direct_transition": "DLCO test",
+      "name": "FVC observation",
+      "range": {
+        "low": 1,
+        "high": 5
+      }
+    },
+    "DLCO test": {
+      "type": "Observation",
+      "category": "vital-signs",
+      "unit": "%",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": 19911,
+          "display": "Diffusion capacity.carbon monoxide",
+          "value_set": ""
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "round": true,
+        "parameters": {
+          "high": 140,
+          "low": 30
+        }
+      },
+      "direct_transition": "FEV1/FVC",
+      "name": "DLCO test"
+    },
+    "New_State": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">",
+        "quantity": 45,
+        "unit": "years"
+      },
+      "direct_transition": "Chance of pulmonary condition",
+      "name": "New_State"
+    },
+    "Chance of pulmonary condition": {
+      "type": "Simple",
+      "name": "Chance of pulmonary condition",
+      "distributed_transition": [
+        {
+          "transition": "Lymphangiomatosis onset",
+          "distribution": 0.01
+        },
+        {
+          "transition": "Fibrosis onset",
+          "distribution": 0.01
+        },
+        {
+          "transition": "Initial",
+          "distribution": 0.98
+        }
+      ]
+    },
+    "FEV1/FVC": {
+      "type": "Observation",
+      "category": "vital-signs",
+      "unit": "",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "19926-5",
+          "display": "FEV1/FVC",
+          "value_set": ""
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "round": true,
+        "parameters": {
+          "high": 90,
+          "low": 40
+        }
+      },
+      "direct_transition": "Terminal",
+      "name": "FEV1/FVC"
+    },
+    "Visit - Lymphangiomatosis": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "reason": "",
+      "telemedicine_possibility": "none",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 403546006,
+          "display": "Lymphangiomatosis",
+          "value_set": ""
+        }
+      ],
+      "name": "Visit - Lymphangiomatosis",
+      "direct_transition": "Pulmonology function tests"
+    },
+    "Fibrosis onset": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 51615001,
+          "display": "Fibrosis of lung",
+          "value_set": ""
+        }
+      ],
+      "direct_transition": "Visit - pulmonary fibrosis",
+      "name": "Fibrosis onset"
+    },
+    "Lymphangiomatosis onset": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 403546006,
+          "display": "Lymphangiomatosis",
+          "value_set": ""
+        }
+      ],
+      "direct_transition": "Visit - Lymphangiomatosis",
+      "name": "Lymphangiomatosis onset"
+    },
+    "Pulmonology_function_tests2": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 127783003,
+          "display": "Spirometry",
+          "value_set": ""
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "parameters": {
+          "high": 60,
+          "low": 30
+        }
+      },
+      "unit": "minutes",
+      "name": "Pulmonology_function_tests2",
+      "reason": "Fibrosis onset",
+      "direct_transition": "FVC observation"
+    }
+  },
+  "gmf_version": 2
+}
