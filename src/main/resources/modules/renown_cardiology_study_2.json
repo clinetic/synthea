@@ -48,7 +48,7 @@
           "distributions": [
             {
               "transition": "Initial",
-              "distribution": 0.1
+              "distribution": 0.2
             }
           ]
         },
@@ -62,7 +62,7 @@
           "distributions": [
             {
               "transition": "Initial",
-              "distribution": 0.2
+              "distribution": 0.4
             }
           ]
         }
