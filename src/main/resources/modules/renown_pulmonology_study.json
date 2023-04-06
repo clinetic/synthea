@@ -63,7 +63,7 @@
           "value_set": ""
         }
       ],
-      "direct_transition": "DLCO test",
+      "direct_transition": "FVC Predicted",
       "name": "FVC observation",
       "range": {
         "low": 1,
@@ -142,7 +142,7 @@
           "low": 40
         }
       },
-      "direct_transition": "Terminal",
+      "direct_transition": "FEV1/FVC Predicted",
       "name": "FEV1/FVC"
     },
     "Visit - Lymphangiomatosis": {
@@ -208,6 +208,52 @@
       "name": "Pulmonology_function_tests2",
       "reason": "Fibrosis onset",
       "direct_transition": "FVC observation"
+    },
+    "FEV1/FVC Predicted": {
+      "type": "Observation",
+      "category": "vital-signs",
+      "unit": "%",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "19925-7",
+          "display": "FEV1/FVC Predicted",
+          "value_set": ""
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "round": false,
+        "parameters": {
+          "high": 140,
+          "low": 40
+        }
+      },
+      "direct_transition": "Terminal",
+      "name": "FEV1/FVC Predicted"
+    },
+    "FVC Predicted": {
+      "type": "Observation",
+      "category": "vital-signs",
+      "unit": "%",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "19869-7",
+          "display": "Forced vital capacity [Volume] Respiratory system Predicted",
+          "value_set": ""
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "round": false,
+        "parameters": {
+          "high": 140,
+          "low": 40
+        }
+      },
+      "direct_transition": "DLCO test",
+      "name": "FVC Predicted"
     }
   },
   "gmf_version": 2
