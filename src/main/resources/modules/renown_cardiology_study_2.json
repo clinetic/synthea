@@ -18,7 +18,7 @@
       "distribution": {
         "kind": "EXACT",
         "parameters": {
-          "value": 10
+          "value": 1
         }
       },
       "unit": "years",
@@ -34,7 +34,7 @@
           "distributions": [
             {
               "transition": "cardio labs",
-              "distribution": 0.01
+              "distribution": 0.3
             }
           ]
         },
@@ -48,7 +48,7 @@
           "distributions": [
             {
               "transition": "Initial",
-              "distribution": 0.2
+              "distribution": 0.6
             }
           ]
         },
@@ -62,7 +62,7 @@
           "distributions": [
             {
               "transition": "Initial",
-              "distribution": 0.4
+              "distribution": 0.8
             }
           ]
         }
@@ -82,7 +82,7 @@
           "value": 5
         }
       },
-      "unit": "years",
+      "unit": "months",
       "name": "high ldl-c",
       "distributed_transition": [
         {
@@ -363,7 +363,7 @@
         "round": true,
         "parameters": {
           "high": 3,
-          "low": 1
+          "low": 2
         }
       }
     },
@@ -475,8 +475,22 @@
           "value_set": ""
         }
       ],
-      "direct_transition": "Encounter_diagnosis",
+      "direct_transition": "Coronary Angiography",
       "name": "cad_condition"
+    },
+    "Coronary Angiography": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 3336700,
+          "display": "Coronary Angiography (procedure)",
+          "value_set": ""
+        }
+      ],
+      "unit": "minutes",
+      "direct_transition": "Encounter_diagnosis",
+      "name": "Coronary Angiography"
     }
   },
   "gmf_version": 2
