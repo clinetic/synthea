@@ -21,8 +21,8 @@
       "codes": [
         {
           "system": "SNOMED-CT",
-          "code": 51615001,
-          "display": "Fibrosis of lung",
+          "code": 700250006,
+          "display": "Idiopathic pulmonary fibrosis",
           "value_set": ""
         }
       ],
@@ -49,7 +49,7 @@
       "unit": "minutes",
       "direct_transition": "FVC observation",
       "name": "Pulmonology function tests",
-      "reason": "Lymphangiomatosis onset"
+      "reason": "Interstatial lung disease onset"
     },
     "FVC observation": {
       "type": "Observation",
@@ -109,7 +109,7 @@
       "name": "Chance of pulmonary condition",
       "distributed_transition": [
         {
-          "transition": "Lymphangiomatosis onset",
+          "transition": "Interstatial lung disease onset",
           "distribution": 0.01
         },
         {
@@ -145,47 +145,18 @@
       "direct_transition": "FEV1/FVC Predicted",
       "name": "FEV1/FVC"
     },
-    "Visit - Lymphangiomatosis": {
-      "type": "Encounter",
-      "encounter_class": "ambulatory",
-      "reason": "",
-      "telemedicine_possibility": "none",
-      "codes": [
-        {
-          "system": "SNOMED-CT",
-          "code": 403546006,
-          "display": "Lymphangiomatosis",
-          "value_set": ""
-        }
-      ],
-      "name": "Visit - Lymphangiomatosis",
-      "direct_transition": "Pulmonology function tests"
-    },
     "Fibrosis onset": {
       "type": "ConditionOnset",
       "codes": [
         {
           "system": "SNOMED-CT",
-          "code": 51615001,
-          "display": "Fibrosis of lung",
+          "code": 700250006,
+          "display": "Idiopathic pulmonary fibrosis",
           "value_set": ""
         }
       ],
       "direct_transition": "Visit - pulmonary fibrosis",
       "name": "Fibrosis onset"
-    },
-    "Lymphangiomatosis onset": {
-      "type": "ConditionOnset",
-      "codes": [
-        {
-          "system": "SNOMED-CT",
-          "code": 403546006,
-          "display": "Lymphangiomatosis",
-          "value_set": ""
-        }
-      ],
-      "direct_transition": "Visit - Lymphangiomatosis",
-      "name": "Lymphangiomatosis onset"
     },
     "Pulmonology_function_tests2": {
       "type": "Procedure",
@@ -254,6 +225,55 @@
       },
       "direct_transition": "DLCO test",
       "name": "FVC Predicted"
+    },
+    "Interstatial lung disease onset": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 233703007,
+          "display": "Interstitial lung disease",
+          "value_set": ""
+        }
+      ],
+      "direct_transition": "progressive fibrosis onset",
+      "name": "Interstatial lung disease onset"
+    },
+    "Visit - Interstatial lung disease": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "reason": "",
+      "telemedicine_possibility": "none",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 233703007,
+          "display": "Interstitial lung disease",
+          "value_set": ""
+        },
+        {
+          "system": "SNOMED-CT",
+          "code": 460561000124109,
+          "display": "PF-ILD-progressive fibrosing interstitial lung disease",
+          "value_set": ""
+        }
+      ],
+      "name": "Visit - Interstatial lung disease",
+      "direct_transition": "Pulmonology function tests"
+    },
+    "progressive fibrosis onset": {
+      "type": "ConditionOnset",
+      "target_encounter": "",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 460561000124109,
+          "display": "PF-ILD-progressive fibrosing interstitial lung disease",
+          "value_set": ""
+        }
+      ],
+      "direct_transition": "Visit - Interstatial lung disease",
+      "name": "progressive fibrosis onset"
     }
   },
   "gmf_version": 2
