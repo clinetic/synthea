@@ -1,0 +1,330 @@
+{
+  "name": "renown_pulmonology_study_2",
+  "remarks": [
+    "module intended to simulate pulmonology conditions and observations"
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "New_State",
+      "name": "Initial"
+    },
+    "Terminal": {
+      "type": "Terminal",
+      "name": "Terminal"
+    },
+    "Pulmonology function tests": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 127783003,
+          "display": "Spirometry",
+          "value_set": ""
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "parameters": {
+          "high": 60,
+          "low": 30
+        }
+      },
+      "unit": "minutes",
+      "direct_transition": "FVC observation",
+      "name": "Pulmonology function tests",
+      "reason": "obstructive pulm exacerbation"
+    },
+    "FVC observation": {
+      "type": "Observation",
+      "category": "vital-signs",
+      "unit": "L",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "19870-5",
+          "display": "Forced vital capacity [Volume] Respiratory system",
+          "value_set": ""
+        }
+      ],
+      "direct_transition": "FVC Predicted",
+      "name": "FVC observation",
+      "range": {
+        "low": 1,
+        "high": 5
+      }
+    },
+    "DLCO test": {
+      "type": "Observation",
+      "category": "vital-signs",
+      "unit": "%",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": 19911,
+          "display": "Diffusion capacity.carbon monoxide",
+          "value_set": ""
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "round": true,
+        "parameters": {
+          "high": 140,
+          "low": 30
+        }
+      },
+      "direct_transition": "FEV1/FVC",
+      "name": "DLCO test"
+    },
+    "New_State": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">",
+        "quantity": 38,
+        "unit": "years"
+      },
+      "direct_transition": "Chance of pulmonary condition",
+      "name": "New_State"
+    },
+    "Chance of pulmonary condition": {
+      "type": "Simple",
+      "name": "Chance of pulmonary condition",
+      "distributed_transition": [
+        {
+          "transition": "nicotine dependence",
+          "distribution": 0.05
+        },
+        {
+          "transition": "Initial",
+          "distribution": 0.95
+        }
+      ]
+    },
+    "FEV1/FVC": {
+      "type": "Observation",
+      "category": "vital-signs",
+      "unit": "",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "19926-5",
+          "display": "FEV1/FVC",
+          "value_set": ""
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "round": true,
+        "parameters": {
+          "high": 90,
+          "low": 40
+        }
+      },
+      "direct_transition": "FEV1/FVC Predicted",
+      "name": "FEV1/FVC"
+    },
+    "Pulmonology_function_tests2": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 127783003,
+          "display": "Spirometry",
+          "value_set": ""
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "parameters": {
+          "high": 60,
+          "low": 30
+        }
+      },
+      "unit": "minutes",
+      "name": "Pulmonology_function_tests2",
+      "reason": "obstructive_pulm onset",
+      "direct_transition": "FVC observation"
+    },
+    "FEV1/FVC Predicted": {
+      "type": "Observation",
+      "category": "vital-signs",
+      "unit": "%",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "19925-7",
+          "display": "FEV1/FVC Predicted",
+          "value_set": ""
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "round": false,
+        "parameters": {
+          "high": 140,
+          "low": 40
+        }
+      },
+      "direct_transition": "Terminal",
+      "name": "FEV1/FVC Predicted"
+    },
+    "FVC Predicted": {
+      "type": "Observation",
+      "category": "vital-signs",
+      "unit": "%",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "19869-7",
+          "display": "Forced vital capacity [Volume] Respiratory system Predicted",
+          "value_set": ""
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "round": false,
+        "parameters": {
+          "high": 140,
+          "low": 40
+        }
+      },
+      "direct_transition": "DLCO test",
+      "name": "FVC Predicted"
+    },
+    "obstructive_pulm onset": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 196001008,
+          "display": "Chronic obstructive pulmonary disease with acute lower respiratory infection",
+          "value_set": ""
+        }
+      ],
+      "direct_transition": "Visit - obstructive_pulm",
+      "name": "obstructive_pulm onset"
+    },
+    "obstructive pulm exacerbation": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 195951007,
+          "display": "Acute exacerbation of chronic obstructive airways disease",
+          "value_set": ""
+        }
+      ],
+      "name": "obstructive pulm exacerbation",
+      "direct_transition": "visit- obstructive_pulm_exacerbation"
+    },
+    "Visit - obstructive_pulm": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "reason": "",
+      "telemedicine_possibility": "none",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 196001008,
+          "display": "Chronic obstructive pulmonary disease with acute lower respiratory infection",
+          "value_set": ""
+        }
+      ],
+      "direct_transition": "Pulmonology_function_tests2",
+      "name": "Visit - obstructive_pulm"
+    },
+    "visit- obstructive_pulm_exacerbation": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "reason": "",
+      "telemedicine_possibility": "none",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 195951007,
+          "display": "exacerbation",
+          "value_set": ""
+        }
+      ],
+      "name": "visit- obstructive_pulm_exacerbation",
+      "direct_transition": "Pulmonology function tests"
+    },
+    "nicotine dependence": {
+      "type": "Simple",
+      "name": "nicotine dependence",
+      "direct_transition": "nicotine_dependence_onset"
+    },
+    "nicotine_dependence_onset": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 56294008,
+          "display": "Nicotine dependence",
+          "value_set": ""
+        }
+      ],
+      "name": "nicotine_dependence_onset",
+      "distributed_transition": [
+        {
+          "transition": "nicotine disorder",
+          "distribution": 0.2
+        },
+        {
+          "transition": "Initial",
+          "distribution": 0.3
+        },
+        {
+          "transition": "obstructive_pulm onset",
+          "distribution": 0.2
+        },
+        {
+          "transition": "obstructive pulm exacerbation",
+          "distribution": 0.2
+        },
+        {
+          "transition": "obstructive_pulm_unspecified",
+          "distribution": 0.10000000000000009
+        }
+      ]
+    },
+    "nicotine disorder": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 30310000,
+          "display": "Nicotine-induced organic mental disorder",
+          "value_set": ""
+        }
+      ],
+      "distributed_transition": [
+        {
+          "transition": "obstructive pulm exacerbation",
+          "distribution": 0.5
+        },
+        {
+          "transition": "obstructive_pulm onset",
+          "distribution": 0.5
+        }
+      ],
+      "name": "nicotine disorder"
+    },
+    "obstructive_pulm_unspecified": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 13645005,
+          "display": "Acute exacerbation of chronic obstructive airways disease",
+          "value_set": ""
+        }
+      ],
+      "name": "obstructive_pulm_unspecified",
+      "direct_transition": "visit- obstructive_pulm_exacerbation"
+    }
+  },
+  "gmf_version": 2
+}
