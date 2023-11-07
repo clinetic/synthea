@@ -1,0 +1,59 @@
+#!/usr/bin/env sh
+
+##############################################################################
+##
+##  Synthea launcher for UN*X
+##
+##############################################################################
+
+if [ $# -eq 0 ]; then
+  # run synthea with no args
+  # ./gradlew run
+  echo "You have the wrong script try run gradle or add some arguments"
+
+else
+  # Running Synthea
+  # I_COUNT counts the number of times we run a patient population of 10k patients
+  I_COUNT=1
+
+  # Copy headers for append and create partition directories
+  cp -R ./output/headers/. ./output/csv/.
+  mkdir ./output/csv/partitions/
+  mkdir ./output/csv/partitions/patients.csv
+  mkdir ./output/csv/partitions/conditions.csv
+  mkdir ./output/csv/partitions/encounters.csv
+  mkdir ./output/csv/partitions/immunizations.csv
+  mkdir ./output/csv/partitions/medications.csv
+  mkdir ./output/csv/partitions/observations.csv
+  mkdir ./output/csv/partitions/organizations.csv
+  mkdir ./output/csv/partitions/payers.csv
+  mkdir ./output/csv/partitions/procedures.csv
+  mkdir ./output/csv/partitions/providers.csv
+
+  while [ $I_COUNT -lt "$1" ] || [ $I_COUNT -eq "$1" ]
+  do
+      # Run Synthea
+      ./gradlew run -Params="['-p', '10000', ]"
+
+      # Copy Partition Files to respective directories
+      cp ./output/csv/patients.csv ./output/csv/partitions/patients.csv/patients_part_"$I_COUNT".csv
+      cp ./output/csv/conditions.csv ./output/csv/partitions/conditions.csv/conditions_part_"$I_COUNT".csv
+      cp ./output/csv/encounters.csv ./output/csv/partitions/encounters.csv/encounters_part_"$I_COUNT".csv
+      cp ./output/csv/immunizations.csv ./output/csv/partitions/immunizations.csv/immunizations_part_"$I_COUNT".csv
+      cp ./output/csv/medications.csv ./output/csv/partitions/medications.csv/medications_part_"$I_COUNT".csv
+      cp ./output/csv/observations.csv ./output/csv/partitions/observations.csv/observations_part_"$I_COUNT".csv
+      cp ./output/csv/organizations.csv ./output/csv/partitions/organizations.csv/organizations_part_"$I_COUNT".csv
+      cp ./output/csv/payers.csv ./output/csv/partitions/payers.csv/payers_part_"$I_COUNT".csv
+      cp ./output/csv/procedures.csv ./output/csv/partitions/procedures.csv/procedures_part_"$I_COUNT".csv
+      cp ./output/csv/providers.csv ./output/csv/partitions/providers.csv/providers_part_"$I_COUNT".csv
+
+      # recopy header files for append
+      cp -R ./output/headers/. ./output/csv/.
+
+      # update counter var
+      I_COUNT=$((I_COUNT + 1))
+  done
+
+
+fi
+

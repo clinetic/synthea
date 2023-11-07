@@ -46,7 +46,16 @@ for more details.
 
 
 
-### Generate Synthetic Patients
+## Generate Synthetic Patients
+### Generate Multiple Populations of Synthetic Patients
+Generateing many populatons of 10k patients at a time - using loop_synthea.sh
+```
+./loop_synthea 10
+```
+Where 10 is the number of times we want to generate a population of 10k patients. This 
+uses append mode and will move the files around to the csv/partitions folder when complete.
+
+### Generate One Popluation of  Synthetic Patients
 Generating the population one at a time...
 ```
 ./run_synthea
