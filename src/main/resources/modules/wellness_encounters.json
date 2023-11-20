@@ -6,12 +6,13 @@
   "states": {
     "Initial": {
       "type": "Initial",
-      "direct_transition": "Wellness_Encounter"
+      "direct_transition": "Wellness_Encounter_Reason"
     },
     "Wellness_Encounter": {
       "type": "Encounter",
       "wellness": true,
-      "direct_transition": "Record_Height"
+      "direct_transition": "Record_Height",
+      "reason": "wellness_encounter_reason"
     },
     "Record_Height": {
       "type": "Observation",
@@ -62,7 +63,7 @@
         {
           "system": "LOINC",
           "code": "39156-5",
-          "display": "Body Mass Index"
+          "display": "Body mass index (BMI) [Ratio]"
         }
       ],
       "unit": "kg/m2",
@@ -149,7 +150,7 @@
         {
           "system": "LOINC",
           "code": "85354-9",
-          "display": "Blood Pressure"
+          "display": "Blood pressure panel with all children optional"
         }
       ],
       "observations": [
@@ -187,7 +188,7 @@
         {
           "system": "LOINC",
           "code": "51990-0",
-          "display": "Basic Metabolic Panel"
+          "display": "Basic metabolic panel - Blood"
         }
       ],
       "observations": [
@@ -198,7 +199,7 @@
             {
               "system": "LOINC",
               "code": "2339-0",
-              "display": "Glucose"
+              "display": "Glucose [Mass/volume] in Blood"
             }
           ],
           "unit": "mg/dL"
@@ -210,7 +211,7 @@
             {
               "system": "LOINC",
               "code": "6299-2",
-              "display": "Urea Nitrogen"
+              "display": "Urea nitrogen [Mass/volume] in Blood"
             }
           ],
           "unit": "mg/dL"
@@ -222,7 +223,7 @@
             {
               "system": "LOINC",
               "code": "38483-4",
-              "display": "Creatinine"
+              "display": "Creatinine [Mass/volume] in Blood"
             }
           ],
           "unit": "mg/dL"
@@ -234,7 +235,7 @@
             {
               "system": "LOINC",
               "code": "49765-1",
-              "display": "Calcium"
+              "display": "Calcium [Mass/volume] in Blood"
             }
           ],
           "unit": "mg/dL"
@@ -246,7 +247,7 @@
             {
               "system": "LOINC",
               "code": "2947-0",
-              "display": "Sodium"
+              "display": "Sodium [Moles/volume] in Blood"
             }
           ],
           "unit": "mmol/L"
@@ -258,7 +259,7 @@
             {
               "system": "LOINC",
               "code": "6298-4",
-              "display": "Potassium"
+              "display": "Potassium [Moles/volume] in Blood"
             }
           ],
           "unit": "mmol/L"
@@ -270,7 +271,7 @@
             {
               "system": "LOINC",
               "code": "2069-3",
-              "display": "Chloride"
+              "display": "Chloride [Moles/volume] in Blood"
             }
           ],
           "unit": "mmol/L"
@@ -282,7 +283,7 @@
             {
               "system": "LOINC",
               "code": "20565-8",
-              "display": "Carbon Dioxide"
+              "display": "Carbon dioxide, total [Moles/volume] in Blood"
             }
           ],
           "unit": "mmol/L"
@@ -297,7 +298,7 @@
         {
           "system": "LOINC",
           "code": "57698-3",
-          "display": "Lipid Panel"
+          "display": "Lipid panel with direct LDL - Serum or Plasma"
         }
       ],
       "observations": [
@@ -308,7 +309,7 @@
             {
               "system": "LOINC",
               "code": "2093-3",
-              "display": "Total Cholesterol"
+              "display": "Cholesterol [Mass/volume] in Serum or Plasma"
             }
           ],
           "unit": "mg/dL"
@@ -344,7 +345,7 @@
             {
               "system": "LOINC",
               "code": "2085-9",
-              "display": "High Density Lipoprotein Cholesterol"
+              "display": "Cholesterol in HDL [Mass/volume] in Serum or Plasma"
             }
           ],
           "unit": "mg/dL"
@@ -360,7 +361,7 @@
         {
           "system": "LOINC",
           "code": "14959-1",
-          "display": "Microalbumin Creatinine Ratio"
+          "display": "Microalbumin/Creatinine [Mass Ratio] in Urine"
         }
       ],
       "unit": "mg/g",
@@ -374,7 +375,7 @@
         {
           "system": "LOINC",
           "code": "33914-3",
-          "display": "Estimated Glomerular Filtration Rate"
+          "display": "Glomerular filtration rate/1.73 sq M.predicted [Volume Rate/Area] in Serum or Plasma by Creatinine-based formula (MDRD)"
         }
       ],
       "unit": "mL/min/{1.73_m2}",
@@ -393,7 +394,7 @@
                   {
                     "system": "SNOMED-CT",
                     "code": "44054006",
-                    "display": "Diabetes"
+                    "display": "Diabetes mellitus type 2 (disorder)"
                   }
                 ]
               },
@@ -429,7 +430,7 @@
                   {
                     "system": "SNOMED-CT",
                     "code": "44054006",
-                    "display": "Diabetes"
+                    "display": "Diabetes mellitus type 2 (disorder)"
                   }
                 ]
               },
@@ -474,7 +475,7 @@
               {
                 "system": "SNOMED-CT",
                 "code": "44054006",
-                "display": "Diabetes"
+                "display": "Diabetes mellitus type 2 (disorder)"
               }
             ]
           },
@@ -596,7 +597,7 @@
                   {
                     "system": "SNOMED-CT",
                     "code": "44054006",
-                    "display": "Diabetes"
+                    "display": "Diabetes mellitus type 2 (disorder)"
                   }
                 ]
               },
@@ -626,7 +627,7 @@
         {
           "system": "LOINC",
           "code": "58410-2",
-          "display": "Complete blood count (hemogram) panel - Blood by Automated count"
+          "display": "CBC panel - Blood by Automated count"
         }
       ],
       "observations": [
@@ -824,7 +825,7 @@
         {
           "system": "LOINC",
           "code": "59576-9",
-          "display": "Body mass index (BMI) [Percentile] Per age and gender"
+          "display": "Body mass index (BMI) [Percentile] Per age and sex"
         }
       ],
       "direct_transition": "Record_BP",
@@ -896,7 +897,7 @@
           "display": "Respiratory rate"
         }
       ],
-      "direct_transition": "Lab_MetabolicPanel",
+      "direct_transition": "Liver Procedure",
       "vital_sign": "Respiration Rate"
     },
     "End_Of_Wellness_Encounter": {
@@ -1029,6 +1030,127 @@
       ],
       "vital_sign": "Head Circumference Percentile",
       "direct_transition": "Record Head Circumference"
+    },
+    "Wellness_Encounter_Reason": {
+      "type": "SetAttribute",
+      "attribute": "wellness_encounter_reason",
+      "direct_transition": "Wellness_Encounter",
+      "value_code": {
+        "system": "SNOMED-CT",
+        "code": 410424005,
+        "display": "Wellness surveillance (regime/therapy)"
+      }
+    },
+    "Record Liver Panel": {
+      "type": "DiagnosticReport",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "24325-3",
+          "display": "Hepatic function"
+        }
+      ],
+      "observations": [
+        {
+          "category": "laboratory",
+          "unit": "U/L",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "6768-6",
+              "display": "ALKALINE PHOSPHATASE"
+            }
+          ],
+          "range": {
+            "low": 0.3,
+            "high": 999
+          }
+        },
+        {
+          "category": "laboratory",
+          "unit": "units",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "17284-1",
+              "display": "MITOCHONDRIAL ANTIBODY (AMA)"
+            }
+          ],
+          "range": {
+            "low": 8.3,
+            "high": 999999
+          }
+        },
+        {
+          "category": "laboratory",
+          "unit": "units",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "13068-2",
+              "display": "ANA PATTERN"
+            }
+          ],
+          "exact": {
+            "quantity": "ATYPICAL SPECKLED"
+          }
+        }
+      ],
+      "direct_transition": "Lab_MetabolicPanel"
+    },
+    "Liver Procedure": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 53044007,
+          "display": "Tissue thromboplastin inhibitor assay"
+        },
+        {
+          "system": "SNOMED-CT",
+          "code": 86228006,
+          "display": "Uric acid measurement"
+        },
+        {
+          "system": "SNOMED-CT",
+          "code": 359788000,
+          "display": "ANA measurement"
+        },
+        {
+          "system": "SNOMED-CT",
+          "code": 104417008,
+          "display": "Immunoassay qualitative multiple step method"
+        },
+        {
+          "system": "SNOMED-CT",
+          "code": 52570007,
+          "display": "Hepatitis panel measurement"
+        },
+        {
+          "system": "SNOMED-CT",
+          "code": 167209002,
+          "display": "Chem. metabolic function tests"
+        },
+        {
+          "system": "SNOMED-CT",
+          "code": 88810008,
+          "display": "Alkaline phosphatase measurement"
+        },
+        {
+          "system": "SNOMED-CT",
+          "code": 167209002,
+          "display": "Hepatic function panel"
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "parameters": {
+          "high": 60,
+          "low": 30
+        }
+      },
+      "unit": "minutes",
+      "direct_transition": "Record Liver Panel"
     }
   },
   "gmf_version": 1
