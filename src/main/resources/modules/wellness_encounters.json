@@ -897,7 +897,7 @@
           "display": "Respiratory rate"
         }
       ],
-      "direct_transition": "Liver Procedure",
+      "direct_transition": "Lab_MetabolicPanel",
       "vital_sign": "Respiration Rate"
     },
     "End_Of_Wellness_Encounter": {
@@ -1040,117 +1040,6 @@
         "code": 410424005,
         "display": "Wellness surveillance (regime/therapy)"
       }
-    },
-    "Record Liver Panel": {
-      "type": "DiagnosticReport",
-      "codes": [
-        {
-          "system": "LOINC",
-          "code": "24325-3",
-          "display": "Hepatic function"
-        }
-      ],
-      "observations": [
-        {
-          "category": "laboratory",
-          "unit": "U/L",
-          "codes": [
-            {
-              "system": "LOINC",
-              "code": "6768-6",
-              "display": "ALKALINE PHOSPHATASE"
-            }
-          ],
-          "range": {
-            "low": 0.3,
-            "high": 999
-          }
-        },
-        {
-          "category": "laboratory",
-          "unit": "units",
-          "codes": [
-            {
-              "system": "LOINC",
-              "code": "17284-1",
-              "display": "MITOCHONDRIAL ANTIBODY (AMA)"
-            }
-          ],
-          "range": {
-            "low": 8.3,
-            "high": 999999
-          }
-        },
-        {
-          "category": "laboratory",
-          "unit": "units",
-          "codes": [
-            {
-              "system": "LOINC",
-              "code": "13068-2",
-              "display": "ANA PATTERN"
-            }
-          ],
-          "exact": {
-            "quantity": "ATYPICAL SPECKLED"
-          }
-        }
-      ],
-      "direct_transition": "Lab_MetabolicPanel"
-    },
-    "Liver Procedure": {
-      "type": "Procedure",
-      "codes": [
-        {
-          "system": "SNOMED-CT",
-          "code": 53044007,
-          "display": "Tissue thromboplastin inhibitor assay"
-        },
-        {
-          "system": "SNOMED-CT",
-          "code": 86228006,
-          "display": "Uric acid measurement"
-        },
-        {
-          "system": "SNOMED-CT",
-          "code": 359788000,
-          "display": "ANA measurement"
-        },
-        {
-          "system": "SNOMED-CT",
-          "code": 104417008,
-          "display": "Immunoassay qualitative multiple step method"
-        },
-        {
-          "system": "SNOMED-CT",
-          "code": 52570007,
-          "display": "Hepatitis panel measurement"
-        },
-        {
-          "system": "SNOMED-CT",
-          "code": 167209002,
-          "display": "Chem. metabolic function tests"
-        },
-        {
-          "system": "SNOMED-CT",
-          "code": 88810008,
-          "display": "Alkaline phosphatase measurement"
-        },
-        {
-          "system": "SNOMED-CT",
-          "code": 167209002,
-          "display": "Hepatic function panel"
-        }
-      ],
-      "distribution": {
-        "kind": "UNIFORM",
-        "parameters": {
-          "high": 60,
-          "low": 30
-        }
-      },
-      "unit": "minutes",
-      "direct_transition": "Record Liver Panel"
     }
   },
   "gmf_version": 1
