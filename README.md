@@ -99,6 +99,7 @@ run_synthea -s 21 -p 100 Utah "Salt Lake City"
 run_synthea -g M -a 60-65
 run_synthea -p 10 --exporter.fhir.export=true
 run_synthea --exporter.baseDirectory="./output_tx/" Texas
+run_synthea -p 10000 --exporter.years_of_history=0 -m tgh_hcm_study_1
 ```
 
 Some settings can be changed in `./src/main/resources/synthea.properties`.
