@@ -88,7 +88,7 @@
         "high": 61,
         "unit": "years"
       },
-      "direct_transition": "Determine HCM"
+      "direct_transition": "Determine HCM 2"
     },
     "Age 80+": {
       "type": "Delay",
@@ -97,9 +97,9 @@
         "high": 90,
         "unit": "years"
       },
-      "direct_transition": "Determine HCM"
+      "direct_transition": "Determine HCM 2"
     },
-    "Determine HCM": {
+    "Determine HCM 2": {
       "type": "Simple",
       "distributed_transition": [
         {
@@ -170,7 +170,7 @@
         "high": 21,
         "unit": "years"
       },
-      "direct_transition": "Determine HCM"
+      "direct_transition": "Determine HCM 2"
     },
     "Age 40-49": {
       "type": "Delay",
@@ -179,7 +179,7 @@
         "high": 31,
         "unit": "years"
       },
-      "direct_transition": "Determine HCM"
+      "direct_transition": "Determine HCM 2"
     }
   },
   "remarks": [
