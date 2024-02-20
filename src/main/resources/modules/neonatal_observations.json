@@ -1,0 +1,140 @@
+{
+  "name": "Neonatal obsevations",
+  "remarks": [
+    "Neonatal observations"
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "name": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": "==",
+        "quantity": 0,
+        "unit": "years",
+        "value": 0
+      },
+      "distributed_transition": [
+        {
+          "distribution": 0.9,
+          "transition": "Gestational Age"
+        },
+        {
+          "distribution": 0.1,
+          "transition": "Terminal"
+        },
+        {
+          "transition": "Initial",
+          "distribution": 1
+        }
+      ],
+      "name": "Age_Guard"
+    },
+    "Terminal": {
+      "type": "Terminal",
+      "name": "Terminal"
+    },
+    "Apgar Scores": {
+      "type": "MultiObservation",
+      "category": "exam",
+      "number_of_observations": 0,
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "LP32192-4",
+          "display": "Apgar",
+          "value_set": ""
+        }
+      ],
+      "name": "Apgar Scores",
+      "observations": [
+        {
+          "category": "exam",
+          "unit": "score",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "48334-7",
+              "display": "1 minute Apgar panel",
+              "value_set": ""
+            }
+          ],
+          "range": {
+            "low": 1,
+            "high": 10
+          }
+        },
+        {
+          "category": "procedure",
+          "unit": "score",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "48333-9",
+              "display": "5 minute Apgar panel",
+              "value_set": ""
+            }
+          ],
+          "range": {
+            "low": 1,
+            "high": 10
+          }
+        },
+        {
+          "category": "procedure",
+          "unit": "score",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "48332-1",
+              "display": "10 minute Apgar panel",
+              "value_set": ""
+            }
+          ],
+          "range": {
+            "low": 1,
+            "high": 10
+          }
+        }
+      ],
+      "direct_transition": "Terminal"
+    },
+    "Gestational Age": {
+      "type": "Observation",
+      "category": "exam",
+      "unit": "",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "LP19507-0",
+          "display": "Gestational age",
+          "value_set": ""
+        }
+      ],
+      "distribution": {
+        "kind": "GAUSSIAN",
+        "round": false,
+        "parameters": {
+          "mean": 39,
+          "standardDeviation": 1
+        }
+      },
+      "name": "Gestational Age",
+      "distributed_transition": [
+        {
+          "transition": "Terminal",
+          "distribution": 0.7
+        },
+        {
+          "transition": "Apgar Scores",
+          "distribution": 0.3
+        }
+      ]
+    }
+  },
+  "gmf_version": 2
+}
