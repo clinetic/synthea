@@ -1,7 +1,7 @@
 {
-  "name": "Adult RSV",
+  "name": "Infant RSV",
   "remarks": [
-    "Module to simulate neonatal RSV for babys 2 months to 2 years old.",
+    "Module to simulate infant RSV for babys 2 months to 2 years old.",
     "",
     "Babys may receive the nirsevimab vaccine and decrease the probability they get RSV.",
     "",
@@ -30,7 +30,7 @@
         }
       ],
       "name": "RSV Infection",
-      "direct_transition": "RSV test"
+      "direct_transition": "RSV Test"
     },
     "": {
       "type": "Simple",
@@ -66,6 +66,20 @@
           "distribution": 0.5
         }
       ]
+    },
+    "Get RSV Vaccination": {
+      "type": "Vaccine",
+      "series": 1,
+      "codes": [
+        {
+          "system": "CVX",
+          "code": 306,
+          "display": "RSV, mAb, nirsevimab-alip, 0.5 mL, neonate to 24 months",
+          "value_set": ""
+        }
+      ],
+      "direct_transition": "Vaccinated RSV Chance",
+      "name": "Get RSV Vaccination"
     },
     "Vaccinated RSV Chance": {
       "type": "Simple",
@@ -171,7 +185,7 @@
       "allow": {
         "condition_type": "Age",
         "operator": "<=",
-        "quantity": 60,
+        "quantity": 2,
         "unit": "years",
         "value": 0
       },
@@ -180,19 +194,10 @@
     },
     "RSV vaccine count": {
       "type": "Counter",
-      "attribute": "RSV Adult Vaccination",
+      "attribute": "RSV Infant Vaccination",
       "action": "increment",
       "name": "RSV vaccine count",
-      "distributed_transition": [
-        {
-          "transition": "Get Abrysvo Vaccination",
-          "distribution": 0.5
-        },
-        {
-          "transition": "Get Arexvy Vaccination",
-          "distribution": 0.5
-        }
-      ]
+      "direct_transition": "Get RSV Vaccination"
     },
     "Next Season": {
       "type": "Guard",
@@ -209,10 +214,19 @@
       "name": "Vaccine Check",
       "conditional_transition": [
         {
+          "transition": "Terminal",
+          "condition": {
+            "condition_type": "Age",
+            "operator": ">",
+            "quantity": 3,
+            "unit": "years"
+          }
+        },
+        {
           "transition": "Vaccinated RSV Chance",
           "condition": {
             "condition_type": "Attribute",
-            "attribute": "RSV AdultVaccination",
+            "attribute": "RSV Infant Vaccination",
             "operator": "==",
             "value": 1
           }
@@ -227,47 +241,19 @@
       "name": "RSV Death",
       "direct_transition": "Terminal"
     },
-    "Get Arexvy Vaccination": {
-      "type": "Vaccine",
-      "series": 1,
-      "codes": [
-        {
-          "system": "CVX",
-          "code": 303,
-          "display": "RSV, recombinant, protein subunit RSVpreF, adjuvant reconstituted, 0.5 mL, PF",
-          "value_set": ""
-        }
-      ],
-      "direct_transition": "Vaccinated RSV Chance",
-      "name": "Get Arexvy Vaccination"
-    },
-    "Get Abrysvo Vaccination": {
-      "type": "Vaccine",
-      "series": 1,
-      "codes": [
-        {
-          "system": "CVX",
-          "code": 305,
-          "display": "RSV, bivalent, protein subunit RSVpreF, diluent reconstituted, 0.5 mL, PF",
-          "value_set": ""
-        }
-      ],
-      "name": "Get Abrysvo Vaccination",
-      "direct_transition": "Vaccinated RSV Chance"
-    },
-    "RSV test": {
+    "RSV Test": {
       "type": "MultiObservation",
-      "category": "laboratory",
+      "category": "vital-signs",
       "number_of_observations": 0,
       "codes": [
         {
           "system": "LOINC",
           "code": "40988-8",
-          "display": "Respiratory syncytial virus RNA [Presence] in Specimen by NAA with probe detec",
+          "display": "Respiratory syncytial virus RNA [Presence] in Specimen by NAA with probe detection",
           "value_set": ""
         }
       ],
-      "name": "RSV test",
+      "name": "RSV Test",
       "observations": [
         {
           "category": "laboratory",
@@ -294,18 +280,18 @@
             }
           ],
           "exact": {
-            "quantity": "positive"
+            "quantity": "negative"
           }
         }
       ],
       "distributed_transition": [
         {
           "transition": "RSV Encounter (escalation)",
-          "distribution": 0.1
+          "distribution": 0.15
         },
         {
           "transition": "End RSV condition",
-          "distribution": 0.9
+          "distribution": 0.85
         }
       ]
     }
