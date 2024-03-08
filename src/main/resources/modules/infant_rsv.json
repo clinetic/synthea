@@ -1,0 +1,255 @@
+{
+  "name": "Neonatal RSV",
+  "remarks": [
+    "Module to simulate neonatal RSV for babys 2 months to 2 years old.",
+    "",
+    "Babys may receive the nirsevimab vaccine and decrease the probability they get RSV.",
+    "",
+    "Small chance of escalation of RSV to bronchitis, or mechanical ventilation. ",
+    "",
+    "Module will delay after a year to simulate seasonality chance of RSV and vaccination cycle. "
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "age guard",
+      "name": "Initial"
+    },
+    "Terminal": {
+      "type": "Terminal",
+      "name": "Terminal"
+    },
+    "RSV Infection": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 55735004,
+          "display": "Respiratory syncytial virus infection",
+          "value_set": ""
+        }
+      ],
+      "distributed_transition": [
+        {
+          "transition": "RSV Encounter (escalation)",
+          "distribution": 0.15
+        },
+        {
+          "transition": "End RSV condition",
+          "distribution": 0.85
+        }
+      ],
+      "name": "RSV Infection"
+    },
+    "": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "distribution": 1
+        }
+      ],
+      "name": ""
+    },
+    "delay season": {
+      "type": "Delay",
+      "distribution": {
+        "kind": "EXACT",
+        "parameters": {
+          "value": 1
+        }
+      },
+      "unit": "years",
+      "name": "delay season",
+      "direct_transition": "Next Season"
+    },
+    "Vaccinnation chance": {
+      "type": "Simple",
+      "name": "Vaccinnation chance",
+      "distributed_transition": [
+        {
+          "transition": "RSV vaccine count",
+          "distribution": 0.5
+        },
+        {
+          "transition": "Non Vaccinated RSV Infection chance",
+          "distribution": 0.5
+        }
+      ]
+    },
+    "Get RSV Vaccination": {
+      "type": "Vaccine",
+      "series": 1,
+      "codes": [
+        {
+          "system": "CVX",
+          "code": 306,
+          "display": "RSV, mAb, nirsevimab-alip, 0.5 mL, neonate to 24 months",
+          "value_set": ""
+        }
+      ],
+      "direct_transition": "Vaccinated RSV Chance",
+      "name": "Get RSV Vaccination"
+    },
+    "Vaccinated RSV Chance": {
+      "type": "Simple",
+      "name": "Vaccinated RSV Chance",
+      "distributed_transition": [
+        {
+          "transition": "RSV Infection",
+          "distribution": 0.05
+        },
+        {
+          "transition": "delay season",
+          "distribution": 0.95
+        }
+      ]
+    },
+    "Non Vaccinated RSV Infection chance": {
+      "type": "Simple",
+      "name": "Non Vaccinated RSV Infection chance",
+      "distributed_transition": [
+        {
+          "transition": "delay season",
+          "distribution": 0.2
+        },
+        {
+          "transition": "RSV Infection",
+          "distribution": 0.8
+        }
+      ]
+    },
+    "RSV Encounter (escalation)": {
+      "type": "Encounter",
+      "encounter_class": "emergency",
+      "reason": "",
+      "telemedicine_possibility": "none",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 79479005,
+          "display": "Respiratory syncytial virus bronchitis",
+          "value_set": ""
+        }
+      ],
+      "name": "RSV Encounter (escalation)",
+      "distributed_transition": [
+        {
+          "transition": "Mechanical Ventilation",
+          "distribution": 0.1
+        },
+        {
+          "transition": "End RSV condition",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "End RSV condition": {
+      "type": "ConditionEnd",
+      "direct_transition": "delay season",
+      "name": "End RSV condition"
+    },
+    "Mechanical Ventilation": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 243141005,
+          "display": "Mechanically assisted spontaneous ventilation (procedure)",
+          "value_set": ""
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "parameters": {
+          "high": 7,
+          "low": 1
+        }
+      },
+      "unit": "days",
+      "distributed_transition": [
+        {
+          "transition": "End RSV condition",
+          "distribution": 0.9
+        },
+        {
+          "transition": "RSV Death",
+          "distribution": 0.1
+        }
+      ],
+      "name": "Mechanical Ventilation",
+      "reason": "RSV Infection"
+    },
+    "RSV Season": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Date",
+        "operator": ">",
+        "month": 9
+      },
+      "direct_transition": "Vaccinnation chance",
+      "name": "RSV Season"
+    },
+    "age guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": "<=",
+        "quantity": 2,
+        "unit": "years",
+        "value": 0
+      },
+      "direct_transition": "RSV Season",
+      "name": "age guard"
+    },
+    "RSV vaccine count": {
+      "type": "Counter",
+      "attribute": "RSV Infant Vaccination",
+      "action": "increment",
+      "name": "RSV vaccine count",
+      "direct_transition": "Get RSV Vaccination"
+    },
+    "Next Season": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Date",
+        "operator": ">",
+        "month": 9
+      },
+      "name": "Next Season",
+      "direct_transition": "Vaccine Check"
+    },
+    "Vaccine Check": {
+      "type": "Simple",
+      "name": "Vaccine Check",
+      "conditional_transition": [
+        {
+          "transition": "Terminal",
+          "condition": {
+            "condition_type": "Age",
+            "operator": ">",
+            "quantity": 3,
+            "unit": "years"
+          }
+        },
+        {
+          "transition": "Vaccinated RSV Chance",
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "RSV Infant Vaccination",
+            "operator": "==",
+            "value": 1
+          }
+        },
+        {
+          "transition": "Non Vaccinated RSV Infection chance"
+        }
+      ]
+    },
+    "RSV Death": {
+      "type": "Death",
+      "name": "RSV Death",
+      "direct_transition": "Terminal"
+    }
+  },
+  "gmf_version": 2
+}
