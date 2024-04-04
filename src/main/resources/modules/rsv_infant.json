@@ -331,8 +331,8 @@
       "codes": [
         {
           "system": "SNOMED-CT",
-          "code": 4120002,
-          "display": "Bronchiolitis",
+          "code": 5505005,
+          "display": "Acute Bronchiolitis",
           "value_set": ""
         }
       ],
@@ -344,8 +344,8 @@
       "codes": [
         {
           "system": "SNOMED-CT",
-          "code": 281239006,
-          "display": "Acute asthma",
+          "code": 195967001,
+          "display": "Other asthma",
           "value_set": ""
         }
       ],
