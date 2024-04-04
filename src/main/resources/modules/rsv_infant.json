@@ -5,6 +5,8 @@
     "",
     "Babys may receive the nirsevimab vaccine and decrease the probability they get RSV.",
     "",
+    "Chance baby will receive an antibiotic as treatment.",
+    "",
     "Small chance of escalation of RSV to bronchitis, or mechanical ventilation. ",
     "",
     "Module will delay after a year to simulate seasonality chance of RSV and vaccination cycle. "
@@ -286,6 +288,19 @@
       ],
       "distributed_transition": [
         {
+          "transition": "Antibiotic Usage",
+          "distribution": 0.3
+        },
+        {
+          "transition": "Treatment Check",
+          "distribution": 0.7
+        }
+      ]
+    },
+    "Treatment Check": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
           "transition": "RSV Encounter (escalation)",
           "distribution": 0.15
         },
@@ -293,7 +308,21 @@
           "transition": "End RSV condition",
           "distribution": 0.85
         }
-      ]
+      ],
+      "name": "Treatment Check"
+    },
+    "Antibiotic Usage": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": 313797,
+          "display": "amoxicillin 25 MG/ML Oral Suspension",
+          "value_set": ""
+        }
+      ],
+      "direct_transition": "Treatment Check",
+      "name": "Antibiotic Usage"
     }
   },
   "gmf_version": 2
