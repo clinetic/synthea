@@ -7,6 +7,8 @@
     "",
     "Chance baby will receive an antibiotic as treatment.",
     "",
+    "Chance baby will be diagnosed with LRTI.",
+    "",
     "Small chance of escalation of RSV to bronchitis, or mechanical ventilation. ",
     "",
     "Module will delay after a year to simulate seasonality chance of RSV and vaccination cycle. "
@@ -32,7 +34,7 @@
         }
       ],
       "name": "RSV Infection",
-      "direct_transition": "RSV Test"
+      "direct_transition": "Non-RSV LRTI Onset Chance"
     },
     "": {
       "type": "Simple",
@@ -323,6 +325,81 @@
       ],
       "direct_transition": "Treatment Check",
       "name": "Antibiotic Usage"
+    },
+    "Bronchiolitis Onset": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 4120002,
+          "display": "Bronchiolitis",
+          "value_set": ""
+        }
+      ],
+      "direct_transition": "Non-RSV LRTI Onset Chance",
+      "name": "Bronchiolitis Onset"
+    },
+    "Acute Asthma Onset": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 281239006,
+          "display": "Acute asthma",
+          "value_set": ""
+        }
+      ],
+      "name": "Acute Asthma Onset",
+      "direct_transition": "Non-RSV LRTI Onset Chance"
+    },
+    "Pneumonia Onset": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 233604007,
+          "display": "Pneumonia",
+          "value_set": ""
+        }
+      ],
+      "direct_transition": "Non-RSV LRTI Onset Chance",
+      "name": "Pneumonia Onset"
+    },
+    "Non-RSV LRTI Onset": {
+      "type": "Simple",
+      "name": "Non-RSV LRTI Onset",
+      "distributed_transition": [
+        {
+          "transition": "Acute Asthma Onset",
+          "distribution": 0.33
+        },
+        {
+          "transition": "Bronchiolitis Onset",
+          "distribution": 0.33
+        },
+        {
+          "transition": "Pneumonia Onset",
+          "distribution": 0.33
+        },
+        {
+          "transition": "Non-RSV LRTI Onset Chance",
+          "distribution": 0.010000000000000009
+        }
+      ]
+    },
+    "Non-RSV LRTI Onset Chance": {
+      "type": "Simple",
+      "name": "Non-RSV LRTI Onset Chance",
+      "distributed_transition": [
+        {
+          "transition": "Non-RSV LRTI Onset",
+          "distribution": 0.3
+        },
+        {
+          "transition": "RSV Test",
+          "distribution": 0.7
+        }
+      ]
     }
   },
   "gmf_version": 2
