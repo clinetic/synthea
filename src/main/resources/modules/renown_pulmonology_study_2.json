@@ -61,7 +61,7 @@
       "codes": [
         {
           "system": "LOINC",
-          "code": 19911,
+          "code": "19911-7",
           "display": "Diffusion capacity.carbon monoxide",
           "value_set": ""
         }
