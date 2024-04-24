@@ -1,0 +1,276 @@
+{
+  "name": "clarity_hepatic_function",
+  "remarks": [
+    "A blank module"
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Hepatic Function"
+    },
+    "Terminal": {
+      "type": "Terminal"
+    },
+    "Hepatic Function": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "1st Liver DX",
+          "distribution": 0.3
+        },
+        {
+          "transition": "Terminal",
+          "distribution": 0.7
+        }
+      ]
+    },
+    "1st Liver DX": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 26958001,
+          "display": "Hepatic Panel"
+        },
+        {
+          "system": "SNOMED-CT",
+          "code": 88810008,
+          "display": "ALP 1"
+        },
+        {
+          "system": "SNOMED-CT",
+          "code": 167209002,
+          "display": "SNOMED Code"
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "parameters": {
+          "high": 60,
+          "low": 30
+        }
+      },
+      "unit": "minutes",
+      "direct_transition": "ALP"
+    },
+    "Liver DX 2": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 52570007,
+          "display": "Hepatitis panel measurement"
+        },
+        {
+          "system": "SNOMED-CT",
+          "code": 104417008,
+          "display": "Immunoassay qualitative multiple step method"
+        },
+        {
+          "system": "SNOMED-CT",
+          "code": 359788000,
+          "display": "ANA measurement"
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "parameters": {
+          "high": 60,
+          "low": 30
+        }
+      },
+      "unit": "minutes",
+      "direct_transition": "ANA"
+    },
+    "Liver DX 3": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 359788000,
+          "display": "ANA Measurement"
+        },
+        {
+          "system": "SNOMED-CT",
+          "code": 86228006,
+          "display": "Uric Acid Measurement"
+        },
+        {
+          "system": "SNOMED-CT",
+          "code": 53044007,
+          "display": "Thromboplastin"
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "parameters": {
+          "high": 60,
+          "low": 30
+        }
+      },
+      "unit": "minutes",
+      "direct_transition": "Liver Lab 3"
+    },
+    "Liver Lab 3": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mmol/L",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "29953-7",
+          "display": "ANA Titer"
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "round": false,
+        "parameters": {
+          "high": 1,
+          "low": 0
+        }
+      },
+      "direct_transition": "ANA Titer"
+    },
+    "ALP": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "6768-6",
+          "display": "ALP"
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "round": false,
+        "parameters": {
+          "high": 999,
+          "low": 0.3
+        }
+      },
+      "direct_transition": "AMA"
+    },
+    "AMA": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "Units",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "17284-1",
+          "display": "AMA"
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "round": false,
+        "parameters": {
+          "high": 99999,
+          "low": 8.3
+        }
+      },
+      "distributed_transition": [
+        {
+          "transition": "Liver DX 2",
+          "distribution": 0.8
+        },
+        {
+          "transition": "Terminal",
+          "distribution": 0.2
+        }
+      ]
+    },
+    "ANA": {
+      "type": "Observation",
+      "category": "vital-signs",
+      "unit": "Units",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "8251-1",
+          "display": "ANA Comment"
+        }
+      ],
+      "exact": {
+        "quantity": "This is a Comment the patient has liver trouble"
+      },
+      "direct_transition": "ANA Pattern"
+    },
+    "ANA Pattern": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "Units",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "13068-2",
+          "display": "ANA Pattern"
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "round": false,
+        "parameters": {
+          "high": 9999,
+          "low": 0.3
+        }
+      },
+      "direct_transition": "ANA Screen"
+    },
+    "ANA Screen": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "Units",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "47383-5",
+          "display": "ANA Screen IFA"
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "round": false,
+        "parameters": {
+          "high": 99999,
+          "low": 1
+        }
+      },
+      "distributed_transition": [
+        {
+          "transition": "Liver DX 3",
+          "distribution": 0.8
+        },
+        {
+          "transition": "Terminal",
+          "distribution": 0.2
+        }
+      ]
+    },
+    "ANA Titer": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mmol/L",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "5048-4",
+          "display": "ANA Titer"
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "round": false,
+        "parameters": {
+          "high": 1,
+          "low": 0
+        }
+      },
+      "direct_transition": "Terminal"
+    }
+  },
+  "gmf_version": 2
+}
