@@ -47,6 +47,25 @@ for more details.
 
 
 ## Generate Synthetic Patients
+### Generate or Regenerate the same population repeatably
+Using this command will generate an identical population. You can also use this command to update a population 
+after new labs or results are added. This command will completely rebuild the population of patients
+however it will be identical to the one before, plus any new data that may get added.
+To run this generater you dont need to pass and parameters but you may add them as you like.
+See the sh file for specifics on how the population is seeded to be the same.
+```
+./generate_identical_synthea_pop
+
+To run a population of a specific size
+
+./generate_identical_synthea_pop -p [Integer number of patients]
+
+```
+
+Using the -p will not change the population, simply the number of patients returned.
+The will be identical as before and are created in the same order.
+
+
 ### Generate Multiple Populations of Synthetic Patients
 Generateing many populatons of 10k patients at a time - using loop_synthea.sh
 ```

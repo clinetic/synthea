@@ -1,0 +1,47 @@
+#!/usr/bin/env sh
+
+##############################################################################
+##
+##  Synthea launcher for UN*X
+##
+##  We can adujust these params as necessary but every time we do so will create a new population
+##
+##  The bare minimum required to recreate a dataset is to provide 3 arguments when running Synthea:
+##
+##  -s seed - The random seed used to produce the population. If not set this will default to the result of System.currentTimeMillis(),
+##      ie, the current system time in milliseconds since 1/1/1970.
+##  -r date - The reference date used to calculate ages from. If not set this will default to the current system date. (For example,
+##      to generate a 50-year old patient, the birthdate is selected by starting from the reference date and subtracting 50 years)
+##  -cs seed - The clinician seed used to produce the... [The official doc trails off this line]
+##  The -e yyyyMMdd flag can be used to set the end date of the simulation. If not set this will default to the current date.
+##      This means that if -e is identical, then two runs will be exactly identical, however if not, the data may change in two ways:
+##
+##  The simulation that runs longer may have additional data not present in the shorter run.
+##  Certain fields may change between the two runs, for instance conditions may be "active" in the shorter run and "resolved"
+##  in the longer run.
+##  In combination with the simulation end date, the exporter.years_of_history config setting may affect the data that is exported.
+##  Again if the two settings match across runs, the results will be exactly identical, however if not, the output may be filtered
+##  such that different entries are present in each run. When an entry is present in both outputs, it will have the same UUID.
+##
+##  With no arguments we will generate a population of 10k patients with the same seed values up to current date
+##
+##############################################################################
+
+if [ $# -eq 0 ]; then
+  # run synthea with no args
+  ./gradlew run -Params="['-p', '100000', '-s', '12345', '-r', '2024-01-01', '-cs', '67890', ]"
+
+else
+  # Running Synthea with arguments
+  # For simplicity, do nothing and just pass the args to gradle
+  SYNTHEA_ARGS=
+
+  for arg in "$@"
+  do
+      SYNTHEA_ARGS=$SYNTHEA_ARGS\'$arg\',
+      # Trailing comma ok, don't need to remove it
+  done
+
+  ./gradlew run -Params="['-s', '12345', '-r', '2024-01-01', '-cs', '67890', $SYNTHEA_ARGS]"
+fi
+
