@@ -1,0 +1,528 @@
+{
+  "name": "Infant RSV",
+  "remarks": [
+    "Module to simulate infant RSV for babys 2 months to 2 years old.",
+    "",
+    "Babys may receive the nirsevimab vaccine and decrease the probability they get RSV.",
+    "",
+    "Chance baby will receive an antibiotic as treatment.",
+    "",
+    "Chance baby will be diagnosed with LRTI.",
+    "",
+    "Small chance of escalation of RSV to bronchitis, or mechanical ventilation. ",
+    "",
+    "Module will delay after a year to simulate seasonality chance of RSV and vaccination cycle. "
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "age guard",
+      "name": "Initial"
+    },
+    "Terminal": {
+      "type": "Terminal",
+      "name": "Terminal"
+    },
+    "RSV Infection": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 55735004,
+          "display": "Respiratory syncytial virus infection",
+          "value_set": ""
+        }
+      ],
+      "name": "RSV Infection",
+      "direct_transition": "Non-RSV LRTI Onset Chance"
+    },
+    "": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "distribution": 1
+        }
+      ],
+      "name": ""
+    },
+    "delay season": {
+      "type": "Delay",
+      "distribution": {
+        "kind": "EXACT",
+        "parameters": {
+          "value": 1
+        }
+      },
+      "unit": "years",
+      "name": "delay season",
+      "direct_transition": "Next Season"
+    },
+    "Vaccinnation chance": {
+      "type": "Simple",
+      "name": "Vaccinnation chance",
+      "distributed_transition": [
+        {
+          "transition": "RSV vaccine count",
+          "distribution": 0.5
+        },
+        {
+          "transition": "Non Vaccinated RSV Infection chance",
+          "distribution": 0.5
+        }
+      ]
+    },
+    "Get RSV Vaccination": {
+      "type": "Vaccine",
+      "series": 1,
+      "codes": [
+        {
+          "system": "CVX",
+          "code": 306,
+          "display": "RSV, mAb, nirsevimab-alip, 0.5 mL, neonate to 24 months",
+          "value_set": ""
+        }
+      ],
+      "direct_transition": "Vaccinated RSV Chance",
+      "name": "Get RSV Vaccination"
+    },
+    "Vaccinated RSV Chance": {
+      "type": "Simple",
+      "name": "Vaccinated RSV Chance",
+      "distributed_transition": [
+        {
+          "transition": "RSV Infection",
+          "distribution": 0.05
+        },
+        {
+          "transition": "delay season",
+          "distribution": 0.95
+        }
+      ]
+    },
+    "Non Vaccinated RSV Infection chance": {
+      "type": "Simple",
+      "name": "Non Vaccinated RSV Infection chance",
+      "distributed_transition": [
+        {
+          "transition": "delay season",
+          "distribution": 0.2
+        },
+        {
+          "transition": "RSV Infection",
+          "distribution": 0.8
+        }
+      ]
+    },
+    "RSV Encounter (escalation)": {
+      "type": "Encounter",
+      "encounter_class": "emergency",
+      "reason": "",
+      "telemedicine_possibility": "none",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 79479005,
+          "display": "Respiratory syncytial virus bronchitis",
+          "value_set": ""
+        }
+      ],
+      "name": "RSV Encounter (escalation)",
+      "distributed_transition": [
+        {
+          "transition": "Mechanical Ventilation",
+          "distribution": 0.1
+        },
+        {
+          "transition": "End RSV condition",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "End RSV condition": {
+      "type": "ConditionEnd",
+      "direct_transition": "delay season",
+      "name": "End RSV condition"
+    },
+    "Mechanical Ventilation": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 243141005,
+          "display": "Mechanically assisted spontaneous ventilation (procedure)",
+          "value_set": ""
+        }
+      ],
+      "distribution": {
+        "kind": "UNIFORM",
+        "parameters": {
+          "high": 7,
+          "low": 1
+        }
+      },
+      "unit": "days",
+      "distributed_transition": [
+        {
+          "transition": "End RSV condition",
+          "distribution": 0.9
+        },
+        {
+          "transition": "RSV Death",
+          "distribution": 0.1
+        }
+      ],
+      "name": "Mechanical Ventilation",
+      "reason": "RSV Infection"
+    },
+    "RSV Season": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Date",
+        "operator": ">",
+        "month": 9
+      },
+      "direct_transition": "Vaccinnation chance",
+      "name": "RSV Season"
+    },
+    "age guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": "<=",
+        "quantity": 2,
+        "unit": "years",
+        "value": 0
+      },
+      "name": "age guard",
+      "conditional_transition": [
+        {
+          "transition": "Birth Weight",
+          "condition": {
+            "condition_type": "Age",
+            "operator": "==",
+            "quantity": 0,
+            "unit": "years",
+            "value": 0
+          }
+        },
+        {
+          "transition": "RSV Season"
+        }
+      ]
+    },
+    "RSV vaccine count": {
+      "type": "Counter",
+      "attribute": "RSV Infant Vaccination",
+      "action": "increment",
+      "name": "RSV vaccine count",
+      "direct_transition": "Get RSV Vaccination"
+    },
+    "Next Season": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Date",
+        "operator": ">",
+        "month": 9
+      },
+      "name": "Next Season",
+      "direct_transition": "Vaccine Check"
+    },
+    "Vaccine Check": {
+      "type": "Simple",
+      "name": "Vaccine Check",
+      "conditional_transition": [
+        {
+          "transition": "Terminal",
+          "condition": {
+            "condition_type": "Age",
+            "operator": ">",
+            "quantity": 3,
+            "unit": "years"
+          }
+        },
+        {
+          "transition": "Vaccinated RSV Chance",
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "RSV Infant Vaccination",
+            "operator": "==",
+            "value": 1
+          }
+        },
+        {
+          "transition": "Non Vaccinated RSV Infection chance"
+        }
+      ]
+    },
+    "RSV Death": {
+      "type": "Death",
+      "name": "RSV Death",
+      "direct_transition": "Terminal"
+    },
+    "RSV Test": {
+      "type": "MultiObservation",
+      "category": "vital-signs",
+      "number_of_observations": 0,
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "40988-8",
+          "display": "Respiratory syncytial virus RNA [Presence] in Specimen by NAA with probe detection",
+          "value_set": ""
+        }
+      ],
+      "name": "RSV Test",
+      "observations": [
+        {
+          "category": "laboratory",
+          "unit": "string",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "40988-8",
+              "display": "Respiratory syncytial virus RNA [Presence] in Specimen by NAA with probe detection"
+            }
+          ],
+          "exact": {
+            "quantity": "positive"
+          }
+        },
+        {
+          "category": "laboratory",
+          "unit": "string",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "95422-2",
+              "display": "Influenza virus A and B and SARS-CoV-2 (COVID-19) RNA panel - Respiratory system specimen by NAA with probe detection"
+            }
+          ],
+          "exact": {
+            "quantity": "negative"
+          }
+        }
+      ],
+      "distributed_transition": [
+        {
+          "transition": "Antibiotic Usage",
+          "distribution": 0.3
+        },
+        {
+          "transition": "Treatment Check",
+          "distribution": 0.7
+        }
+      ]
+    },
+    "Treatment Check": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "RSV Encounter (escalation)",
+          "distribution": 0.15
+        },
+        {
+          "transition": "End RSV condition",
+          "distribution": 0.85
+        }
+      ],
+      "name": "Treatment Check"
+    },
+    "Antibiotic Usage": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": 313797,
+          "display": "amoxicillin 25 MG/ML Oral Suspension",
+          "value_set": ""
+        }
+      ],
+      "direct_transition": "Treatment Check",
+      "name": "Antibiotic Usage"
+    },
+    "Bronchiolitis Onset": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 5505005,
+          "display": "Acute Bronchiolitis",
+          "value_set": ""
+        }
+      ],
+      "direct_transition": "Non-RSV LRTI Onset Chance",
+      "name": "Bronchiolitis Onset"
+    },
+    "Acute Asthma Onset": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 195967001,
+          "display": "Other asthma",
+          "value_set": ""
+        }
+      ],
+      "name": "Acute Asthma Onset",
+      "direct_transition": "Non-RSV LRTI Onset Chance"
+    },
+    "Pneumonia Onset": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 233604007,
+          "display": "Pneumonia",
+          "value_set": ""
+        }
+      ],
+      "direct_transition": "Non-RSV LRTI Onset Chance",
+      "name": "Pneumonia Onset"
+    },
+    "Non-RSV LRTI Onset": {
+      "type": "Simple",
+      "name": "Non-RSV LRTI Onset",
+      "distributed_transition": [
+        {
+          "transition": "Acute Asthma Onset",
+          "distribution": 0.33
+        },
+        {
+          "transition": "Bronchiolitis Onset",
+          "distribution": 0.33
+        },
+        {
+          "transition": "Pneumonia Onset",
+          "distribution": 0.33
+        },
+        {
+          "transition": "Non-RSV LRTI Onset Chance",
+          "distribution": 0.010000000000000009
+        }
+      ]
+    },
+    "Non-RSV LRTI Onset Chance": {
+      "type": "Simple",
+      "name": "Non-RSV LRTI Onset Chance",
+      "distributed_transition": [
+        {
+          "transition": "Non-RSV LRTI Onset",
+          "distribution": 0.3
+        },
+        {
+          "transition": "RSV Test",
+          "distribution": 0.7
+        }
+      ]
+    },
+    "Birth Weight": {
+      "type": "Observation",
+      "category": "vital-signs",
+      "unit": "kg",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "29463-7",
+          "display": "Body weight",
+          "value_set": ""
+        }
+      ],
+      "distribution": {
+        "kind": "GAUSSIAN",
+        "round": false,
+        "parameters": {
+          "mean": 3.4,
+          "standardDeviation": 0.49
+        }
+      },
+      "direct_transition": "Gestational Age",
+      "name": "Birth Weight"
+    },
+    "Gestational Age": {
+      "type": "Observation",
+      "category": "vital-signs",
+      "unit": "weeks",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "LP19507-0",
+          "display": "Gestational Age",
+          "value_set": ""
+        }
+      ],
+      "distribution": {
+        "kind": "GAUSSIAN",
+        "round": false,
+        "parameters": {
+          "mean": 39,
+          "standardDeviation": 1
+        }
+      },
+      "direct_transition": "Apgar Scores",
+      "name": "Gestational Age"
+    },
+    "Apgar Scores": {
+      "type": "MultiObservation",
+      "category": "exam",
+      "number_of_observations": 0,
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "LP32192-4",
+          "display": "Apgar",
+          "value_set": ""
+        }
+      ],
+      "direct_transition": "RSV Season",
+      "name": "Apgar Scores",
+      "observations": [
+        {
+          "category": "procedure",
+          "unit": "score",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "48334-7",
+              "display": "1 minute Apgar panel"
+            }
+          ],
+          "range": {
+            "low": 1,
+            "high": 10
+          }
+        },
+        {
+          "category": "procedure",
+          "unit": "score",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "48333-9",
+              "display": "5 minute Apgar panel"
+            }
+          ],
+          "range": {
+            "low": 1,
+            "high": 10
+          }
+        },
+        {
+          "category": "procedure",
+          "unit": "score",
+          "codes": [
+            {
+              "system": "LOINC",
+              "code": "48332-1",
+              "display": "10 minute Apgar panel"
+            }
+          ],
+          "range": {
+            "low": 1,
+            "high": 10
+          }
+        }
+      ]
+    }
+  },
+  "gmf_version": 2
+}
