@@ -6,10 +6,12 @@
   "states": {
     "Initial": {
       "type": "Initial",
-      "direct_transition": "Age delay"
+      "direct_transition": "Age delay",
+      "name": "Initial"
     },
     "Terminal": {
-      "type": "Terminal"
+      "type": "Terminal",
+      "name": "Terminal"
     },
     "Age delay": {
       "type": "Delay",
@@ -55,7 +57,8 @@
             }
           ]
         }
-      ]
+      ],
+      "name": "Age delay"
     },
     "Hypothyroid symptoms": {
       "type": "Symptom",
@@ -64,7 +67,8 @@
       "exact": {
         "quantity": 1
       },
-      "direct_transition": "Hypothyroidism followup encounter"
+      "direct_transition": "Hypothyroidism followup encounter",
+      "name": "Hypothyroid symptoms"
     },
     "Hypothyroid Condition Onset": {
       "type": "ConditionOnset",
@@ -74,10 +78,12 @@
         {
           "system": "SNOMED-CT",
           "code": 83664006,
-          "display": "Idiopathic atrophic hypothyroidism"
+          "display": "Idiopathic atrophic hypothyroidism",
+          "value_set": ""
         }
       ],
-      "direct_transition": "Hypothyroidism Encounter Workup"
+      "direct_transition": "Hypothyroidism Encounter Workup",
+      "name": "Hypothyroid Condition Onset"
     },
     "Hypothyroidism Encounter Workup": {
       "type": "Encounter",
@@ -87,10 +93,12 @@
         {
           "system": "SNOMED-CT",
           "code": 185347001,
-          "display": "Encounter for Problem"
+          "display": "Encounter for Problem",
+          "value_set": ""
         }
       ],
-      "direct_transition": "fT4 panel results"
+      "direct_transition": "fT4 panel results",
+      "name": "Hypothyroidism Encounter Workup"
     },
     "Hypothyroid symptom": {
       "type": "Symptom",
@@ -99,7 +107,8 @@
       "exact": {
         "quantity": 1
       },
-      "direct_transition": "Hypothyroidism"
+      "direct_transition": "Hypothyroidism",
+      "name": "Hypothyroid symptom"
     },
     "Hypothyroidism": {
       "type": "Symptom",
@@ -108,7 +117,8 @@
       "exact": {
         "quantity": 1
       },
-      "direct_transition": "hypothyroidism"
+      "direct_transition": "hypothyroidism",
+      "name": "Hypothyroidism"
     },
     "hypothyroidism": {
       "type": "Symptom",
@@ -117,7 +127,8 @@
       "exact": {
         "quantity": 1
       },
-      "direct_transition": "Hypothyroid Condition Onset"
+      "direct_transition": "Hypothyroid Condition Onset",
+      "name": "hypothyroidism"
     },
     "Hypothyroidism followup encounter": {
       "type": "Encounter",
@@ -128,10 +139,12 @@
         {
           "system": "SNOMED-CT",
           "code": 185347001,
-          "display": "Encounter for Problem"
+          "display": "Encounter for Problem",
+          "value_set": ""
         }
       ],
-      "direct_transition": "Synthroid Medication Order"
+      "direct_transition": "Synthroid Medication Order",
+      "name": "Hypothyroidism followup encounter"
     },
     "encounter time delay": {
       "type": "Delay",
@@ -139,11 +152,13 @@
         "quantity": 1,
         "unit": "weeks"
       },
-      "direct_transition": "Hypothyroid symptoms"
+      "direct_transition": "Hypothyroid symptoms",
+      "name": "encounter time delay"
     },
     "encounter end": {
       "type": "EncounterEnd",
-      "direct_transition": "encounter time delay"
+      "direct_transition": "encounter time delay",
+      "name": "encounter end"
     },
     "fT4 panel results": {
       "type": "Observation",
@@ -153,14 +168,73 @@
         {
           "system": "LOINC",
           "code": "3024-7",
-          "display": "Thyroxine (T4) free [Mass/volume] in Serum or Plasma"
+          "display": "Thyroxine (T4) free [Mass/volume] in Serum or Plasma",
+          "value_set": ""
+        }
+      ],
+      "direct_transition": "fT4Total panel results",
+      "range": {
+        "low": 0.1,
+        "high": 0.4
+      },
+      "name": "fT4 panel results"
+    },
+    "fT4Total panel results": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mcg/dL",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "3026-2",
+          "display": "Thyroxine (T4) [Mass/volume] in Serum or Plasma",
+          "value_set": ""
+        }
+      ],
+      "direct_transition": "fT3 panel results",
+      "range": {
+        "low": 3,
+        "high": 14
+      },
+      "name": "fT4Total panel results"
+    },
+    "fT3 panel results": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "pg/dL",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "3051-0",
+          "display": "Triiodothyronine (T3) Free [Mass/volume] in Serum or Plasma",
+          "value_set": ""
+        }
+      ],
+      "direct_transition": "fT3Total panel results",
+      "range": {
+        "low": 1.5,
+        "high": 5
+      },
+      "name": "fT3 panel results"
+    },
+    "fT3Total panel results": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mcg/dL",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "3053-6",
+          "display": "Triiodothyronine (T3) [Mass/volume] in Serum or Plasma",
+          "value_set": ""
         }
       ],
       "direct_transition": "TSH panel result",
       "range": {
-        "low": 0.1,
-        "high": 0.4
-      }
+        "low": 3,
+        "high": 14
+      },
+      "name": "fT3Total panel results"
     },
     "TSH panel result": {
       "type": "Observation",
@@ -170,14 +244,16 @@
         {
           "system": "LOINC",
           "code": "3016-3",
-          "display": "Thyrotropin [Units/volume] in Serum or Plasma"
+          "display": "Thyrotropin [Units/volume] in Serum or Plasma",
+          "value_set": ""
         }
       ],
       "direct_transition": "encounter end",
       "range": {
         "low": 2,
         "high": 5
-      }
+      },
+      "name": "TSH panel result"
     },
     "Synthroid Medication Order": {
       "type": "MedicationOrder",
@@ -185,7 +261,8 @@
         {
           "system": "RxNorm",
           "code": 966222,
-          "display": "Levothyroxine Sodium 0.075 MG Oral Tablet"
+          "display": "Levothyroxine Sodium 0.075 MG Oral Tablet",
+          "value_set": ""
         }
       ],
       "direct_transition": "end encounter",
@@ -201,7 +278,8 @@
           "unit": "days"
         },
         "refills": 6
-      }
+      },
+      "name": "Synthroid Medication Order"
     },
     "end encounter": {
       "type": "EncounterEnd",
@@ -217,12 +295,14 @@
       ],
       "remarks": [
         "Anemia prevalence was 43% in the hypothyroid group - "
-      ]
+      ],
+      "name": "end encounter"
     },
     "Anemia_Submodule": {
       "type": "CallSubmodule",
       "submodule": "anemia/anemia_sub",
-      "direct_transition": "Terminal"
+      "direct_transition": "Terminal",
+      "name": "Anemia_Submodule"
     },
     "Check_Anemia_Exist": {
       "type": "Simple",
@@ -238,7 +318,8 @@
         {
           "transition": "Terminal"
         }
-      ]
+      ],
+      "name": "Check_Anemia_Exist"
     }
   },
   "gmf_version": 1
