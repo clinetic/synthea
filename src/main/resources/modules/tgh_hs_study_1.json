@@ -88,7 +88,7 @@
         "high": 61,
         "unit": "years"
       },
-      "direct_transition": "HS condition onset 2"
+      "direct_transition": "Determine HS 2"
     },
     "Age 80+": {
       "type": "Delay",
@@ -97,7 +97,20 @@
         "high": 90,
         "unit": "years"
       },
-      "direct_transition": "HS condition onset 2"
+      "direct_transition": "Determine HS 2"
+    },
+    "Determine HS 2": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "HS condition onset 1",
+          "distribution": 0.5
+        },
+        {
+          "transition": "HS condition onset 2",
+          "distribution": 0.5
+        }
+      ]
     },
     "HS condition onset 2": {
       "type": "ConditionOnset",
@@ -145,7 +158,7 @@
         "high": 21,
         "unit": "years"
       },
-      "direct_transition": "Determine HCM 2"
+      "direct_transition": "Determine HS 2"
     },
     "Age 40-49": {
       "type": "Delay",
@@ -154,7 +167,7 @@
         "high": 31,
         "unit": "years"
       },
-      "direct_transition": "Determine HCM 2"
+      "direct_transition": "Determine HS 2"
     }
   },
   "remarks": [
